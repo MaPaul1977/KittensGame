@@ -136,6 +136,24 @@ if (autoCheck[0] != "false") {
 		$(".btnContent:contains('" + (buildings[i]) + "')").click();
 	}
 }
+	
+if (autoCheck[3] != "false") {
+		// Trade automatically
+	var goldResource = gamePage.resPool.get('gold');
+    var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
+		if (goldResource.value > (goldResource.maxValue - goldOneTwenty) && gamePage.diplomacy.get('zebras').unlocked) {
+			gamePage.diplomacy.tradeMultiple(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
+		}
+}
+	
+if (autoCheck[2] != "false") {		
+		// Hunt automatically
+	var catpower = gamePage.resPool.get('manpower');
+	var catpowerOneTwenty = gamePage.getResourcePerTick('manpower') * 200;
+		if (catpower.value > (catpower.maxValue - catpowerOneTwenty)) {
+			gamePage.village.huntMultiple(catpowerOneTwenty / 100);
+		}
+}	
 
 if (autoCheck[1] != "false") {
 		// Craft high level resources automatically
@@ -155,24 +173,6 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 				gamePage.craftAll(furDerivatives[i]); 
 		}
 	}
-}
-
-if (autoCheck[2] != "false") {		
-		// Hunt automatically
-	var catpower = gamePage.resPool.get('manpower');
-	var catpowerOneTwenty = gamePage.getResourcePerTick('manpower') * 200;
-		if (catpower.value > (catpower.maxValue - catpowerOneTwenty)) {
-			gamePage.village.huntMultiple(catpowerOneTwenty / 100);
-		}
-}
-
-if (autoCheck[3] != "false") {
-		// Trade automatically
-	var goldResource = gamePage.resPool.get('gold');
-    var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
-		if (goldResource.value > (goldResource.maxValue - goldOneTwenty) && gamePage.diplomacy.get('zebras').unlocked) {
-			gamePage.diplomacy.tradeMultiple(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
-		}
 }
 
 if (autoCheck[4] != "false") {
