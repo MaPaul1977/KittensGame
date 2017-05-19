@@ -3,7 +3,7 @@ Kittens Game Scripts
 
 If you want to use this, feel free to bookmark:
 
-javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/MaPaul1977/KittensGame/master/KittensV20.js';d.body.appendChild(s);})();
+[javascript:(function(){var d=document,s=d.createElement('script');s.src='https://rawgit.com/MaPaul1977/KittensGame/master/ScriptKitties.js';d.body.appendChild(s);})();]
 
 or just paste it directly into the console.
 
