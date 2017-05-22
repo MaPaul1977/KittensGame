@@ -1,7 +1,7 @@
 $('head').append('<script type="text/javascript" src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"><\/script>');
 $('head').append('<script type="css" src="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"><\/script>');
 
-var autoCheck = ['false', 'true', 'true', 'true', 'true'];
+var autoCheck = ['true', 'true', 'true', 'true', 'true'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise'];
 
 var tickDownCounter = 30;
