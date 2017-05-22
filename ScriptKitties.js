@@ -130,10 +130,10 @@ var autoRun = setInterval(function() {
         	["catnip", "wood", 50],
 		["wood", "beam", 175],
         	["minerals", "slab", 250],
-       		["coal", "steel", 100],
+       		["coal", "steel", .5],
         	["iron", "plate", 125],
 		["oil", "kerosene", 1000],
-		["titanium", "alloy", 35]
+		["titanium", "alloy", 75]
 		];
 		
 		// Build buildings automatically
