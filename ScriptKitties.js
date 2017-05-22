@@ -130,7 +130,7 @@ var autoRun = setInterval(function() {
         	["catnip", "wood", 50],
 		["wood", "beam", 175],
         	["minerals", "slab", 250],
-       		["coal", "steel", 0.5],
+       		["coal", "steel", 1],
         	["iron", "plate", 125],
 		["oil", "kerosene", 1000],
 		["titanium", "alloy", 75]
