@@ -100,22 +100,22 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 '	Science<br>' + 
 '	<input type="checkbox" id="libraryBld" onclick="verifyBuildingSelected(\'21\', \'libraryBld\')"><label for="libraryBld">Library</label><br>' + 
 '	<input type="checkbox" id="academyBld" onclick="verifyBuildingSelected(\'22\', \'academyBld\')"><label for="academyBld">Academy</label><br>' + 
-'	<input type="checkbox" id="obervatoryBld" onclick="verifyBuildingSelected(\'24\', \'obervatoryBld\')"><label for="obervatoryBld">Observatory</label><br><br>' + 
+'	<input type="checkbox" id="obervatoryBld" onclick="verifyBuildingSelected(\'23\', \'obervatoryBld\')"><label for="obervatoryBld">Observatory</label><br><br>' + 
 
 '	Storage<br>' + 
-'	<input type="checkbox" id="barnBld" onclick="verifyBuildingSelected(\'25\', \'barnBld\')"><label for="barnBld">Barn</label><br>' + 
-'	<input type="checkbox" id="harborBld" onclick="verifyBuildingSelected(\'26\', \'harborBld\')"><label for="harborBld">Harbor</label><br>' + 
-'	<input type="checkbox" id="warehouseBld" onclick="verifyBuildingSelected(\'27\', \'warehouseBld\')"><label for="warehouseBld">Warehouse</label><br><br>' + 
+'	<input type="checkbox" id="barnBld" onclick="verifyBuildingSelected(\'24\', \'barnBld\')"><label for="barnBld">Barn</label><br>' + 
+'	<input type="checkbox" id="harborBld" onclick="verifyBuildingSelected(\'25\', \'harborBld\')"><label for="harborBld">Harbor</label><br>' + 
+'	<input type="checkbox" id="warehouseBld" onclick="verifyBuildingSelected(\'26\', \'warehouseBld\')"><label for="warehouseBld">Warehouse</label><br><br>' + 
 
 '	Other<br>' + 
-'	<input type="checkbox" id="ampBld" onclick="verifyBuildingSelected(\'28\', \'ampBld\')"><label for="ampBld">Amphitheatre</label><br>' + 
-'	<input type="checkbox" id="towerBld" onclick="verifyBuildingSelected(\'29\', \'towerBld\')"><label for="towerBld">Broadcast Tower</label><br>' + 
-'	<input type="checkbox" id="tradeBld" onclick="verifyBuildingSelected(\'30\', \'tradeBld\')"><label for="tradeBld">Tradepost</label><br>' + 
-'	<input type="checkbox" id="chapelBld" onclick="verifyBuildingSelected(\'31\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
-'	<input type="checkbox" id="templeBld" onclick="verifyBuildingSelected(\'32\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
-'	<input type="checkbox" id="mintBld" onclick="verifyBuildingSelected(\'33\', \'mintBld\')"><label for="mintBld">Mint</label><br>' + 
-'	<input type="checkbox" id="zigguratBld" onclick="verifyBuildingSelected(\'34\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br>' + 
-'	<input type="checkbox" id="chronoBld" onclick="verifyBuildingSelected(\'35\', \'chronoBld\')"><label for="chronoBld">Chronosphere</label><br><br>' + 
+'	<input type="checkbox" id="ampBld" onclick="verifyBuildingSelected(\'27\', \'ampBld\')"><label for="ampBld">Amphitheatre</label><br>' + 
+'	<input type="checkbox" id="towerBld" onclick="verifyBuildingSelected(\'28\', \'towerBld\')"><label for="towerBld">Broadcast Tower</label><br>' + 
+'	<input type="checkbox" id="tradeBld" onclick="verifyBuildingSelected(\'29\', \'tradeBld\')"><label for="tradeBld">Tradepost</label><br>' + 
+'	<input type="checkbox" id="chapelBld" onclick="verifyBuildingSelected(\'30\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
+'	<input type="checkbox" id="templeBld" onclick="verifyBuildingSelected(\'31\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
+'	<input type="checkbox" id="mintBld" onclick="verifyBuildingSelected(\'32\', \'mintBld\')"><label for="mintBld">Mint</label><br>' + 
+'	<input type="checkbox" id="zigguratBld" onclick="verifyBuildingSelected(\'33\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br>' + 
+'	<input type="checkbox" id="chronoBld" onclick="verifyBuildingSelected(\'34\', \'chronoBld\')"><label for="chronoBld">Chronosphere</label><br><br>' + 
 
 '</div>'
 
