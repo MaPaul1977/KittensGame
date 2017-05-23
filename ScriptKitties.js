@@ -226,10 +226,15 @@ if (autoCheck[0] != "false") {
 	
 if (autoCheck[3] != "false") {
 		// Trade automatically
+	var titRes = gamePage.resPool.get('titanium');
 	var goldResource = gamePage.resPool.get('gold');
     var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
-		if (goldResource.value > (goldResource.maxValue - goldOneTwenty) && gamePage.diplomacy.get('zebras').unlocked) {
-			gamePage.diplomacy.tradeMultiple(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
+		if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
+			if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
+				gamePage.diplomacy.tradeMultiple(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
+			} else if (gamePage.diplomacy.get('dragons').unlocked) {
+				gamePage.diplomacy.tradeMultiple(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
+			}
 		}
 }
 	
