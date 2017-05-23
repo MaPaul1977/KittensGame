@@ -1,6 +1,3 @@
-$('head').append('<script type="text/javascript" src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"><\/script>');
-$('head').append('<script type="css" src="https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"><\/script>');
-
 var autoCheck = ['true', 'true', 'true', 'true', 'true'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise'];
 
@@ -205,15 +202,16 @@ var autoObserve = setInterval(function() {
 clearInterval(autoRun);
 var autoRun = setInterval(function() {
 	
-	var resources = [
-        ["catnip", "wood", 50],
-		["wood", "beam", 175],
-        ["minerals", "slab", 250],
-       	["coal", "steel", 100],
-        ["iron", "plate", 125],
-		["oil", "kerosene", 1000],
-		["titanium", "alloy", 75]
-		];
+        var resources = [
+       		["catnip", "wood", 50],
+                ["wood", "beam", 175],
+        	["minerals", "slab", 250],
+                ["coal", "steel", 100],
+        	["iron", "plate", 125],
+                ["oil", "kerosene", 1000],
+                ["titanium", "alloy", 75],
+                ["uranium", "thorium", 250]
+                ];
 		
 		// Build buildings automatically
 if (autoCheck[0] != "false") {
