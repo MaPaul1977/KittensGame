@@ -16,3 +16,5 @@ Currently this script will automatically do the following:
 5) Praise
 
 It also allows you to check your paragon efficiency on the fly.
+
+Special thanks to both AutoKittens and KittenScientists for some of the ideas I integrated into this script.
