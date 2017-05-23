@@ -9,11 +9,9 @@ or just paste it directly into the console.
 
 Currently this script will automatically do the following:
 
-1) Build
-Note: Lets you choose which buildings you would like auto built.
+1) Build  * Note: Lets you choose which buildings you would like auto built.
     
-2) Craft
-Note: Lets you choose what level of fur-based items you would like crafted.
+2) Craft   * Note: Lets you choose what level of fur-based items you would like crafted.
 
 3) Hunt
 4) Trade
