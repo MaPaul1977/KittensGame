@@ -10,10 +10,16 @@ or just paste it directly into the console.
 Currently this script will automatically do the following:
 
 1) Build
+    1a) Let you choose which buildings you would like auto built.
+    
 2) Craft
+    2a) Let you choose what level of fur-based items you would like crafted.
+
 3) Hunt
 4) Trade
 5) Praise
+
+In addition, it does 2-4 only once the corresponding resources are maxed. This allows you to come back to the game whenever you like and still be able to use your resources.
 
 It also allows you to check your paragon efficiency on the fly.
 
