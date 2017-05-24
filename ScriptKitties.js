@@ -232,9 +232,9 @@ if (autoCheck[3] != "false") {
     var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 		if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
 			if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
+				gamePage.diplomacy.tradeMultiple(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
 			} else if (gamePage.diplomacy.get('dragons').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
+				gamePage.diplomacy.tradeMultiple(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
 			}
 		}
 }
