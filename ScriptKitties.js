@@ -210,7 +210,8 @@ var autoRun = setInterval(function() {
         	["iron", "plate", 125],
                 ["oil", "kerosene", 1000],
                 ["titanium", "alloy", 75],
-                ["uranium", "thorium", 250]
+                ["uranium", "thorium", 250],
+		["unobtanium", "eludium", 15]
                 ];
 		
 		// Build buildings automatically
