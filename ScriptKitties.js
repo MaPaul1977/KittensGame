@@ -232,9 +232,9 @@ if (autoCheck[3] != "false") {
     var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 		if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
 			if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"));
+				gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
 			} else if (gamePage.diplomacy.get('dragons').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"));
+				gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
 			}
 		}
 }
@@ -257,11 +257,12 @@ for (var i = 0; i < resources.length; i++) {
 		if (curRes.value > (curRes.maxValue - resourceOneTwenty) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 		gamePage.craft(resources[i][1], (resourceOneTwenty / resources[i][2]));
 		}
+	}
+
 	if (gamePage.resPool.get('unobtainium').value > (gamePage.resPool.get('unobtainium').maxValue - 1)) {
 		gamePage.craftAll('eludium');
 	}
-}
-
+	
 		//Craft the fur derivatives
 var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 	for (var i = 0; i < furDerVal; i++) {
