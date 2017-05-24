@@ -210,8 +210,8 @@ var autoRun = setInterval(function() {
         	["iron", "plate", 125],
                 ["oil", "kerosene", 1000],
                 ["titanium", "alloy", 75],
-                ["uranium", "thorium", 250]
-		// ["unobtainium", "eludium", 1000]
+                ["uranium", "thorium", 250],
+		["unobtainium", "eludium", 1000]
                 ];
 		
 		// Build buildings automatically
@@ -257,10 +257,6 @@ for (var i = 0; i < resources.length; i++) {
 		if (curRes.value > (curRes.maxValue - resourceOneTwenty) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 		gamePage.craft(resources[i][1], (resourceOneTwenty / resources[i][2]));
 		}
-	}
-
-	if (gamePage.resPool.get('unobtainium').value > (gamePage.resPool.get('unobtainium').maxValue - 1)) {
-		gamePage.craftAll('eludium');
 	}
 	
 		//Craft the fur derivatives
