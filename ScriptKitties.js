@@ -1,5 +1,5 @@
-var autoCheck = ['true', 'true', 'true', 'true', 'true'];
-var autoName = ['build', 'craft', 'hunt', 'trade', 'praise'];
+var autoCheck = ['true', 'true', 'true', 'true', 'true', 'false', 'false'];
+var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade'];
 
 var tickDownCounter = 30;
 var deadScript = "Script is dead";
@@ -44,24 +44,33 @@ var buildings = [
 		];	
 
 var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
-'<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button>' +
-'<button id="efficiencyButton" onclick="kittenEfficiency()">Check Efficiency</button>' +
-'<button id="autoBuild" onclick="autoSwitch(autoCheck[0], 0, autoName[0])"> Auto Build </button>' + 
-'<button id="bldSelect" onclick="selectBuildings()">Select Building</button>' +
 
-'<button id="autoCraft" onclick="autoSwitch(autoCheck[1], 1, autoName[1])"> Auto Craft </button>' +
+'<a id="scriptOptions" onclick="selectOptions()"> | ScriptKitties </a>' + 
+
+'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-600px;" class="dialog help">' + 
+'<a href="#" onclick="clearOptionHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
+
+'<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
+'<button id="efficiencyButton" onclick="kittenEfficiency()">Check Efficiency</button></br></br>' +
+'<button id="autoBuild" onclick="autoSwitch(autoCheck[0], 0, autoName[0], \'autoBuild\');"> Auto Build </button></br>' + 
+'<button id="bldSelect" onclick="selectBuildings()">Select Building</button></br>' +
+
+'<button id="autoCraft" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
 '<select id="craftFur" size="1" onclick="setFurValue()">' +
-'<option value="1">Parchment</option>' +
+'<option value="1" selected="selected">Parchment</option>' +
 '<option value="2">Manuscript</option>' +
 '<option value="3">Compendium</option>' +
 '<option value="4">Blueprint</option>' +
-'</select>' +
+'</select></br>' +
 
-'<button id="autoHunt" onclick="autoSwitch(autoCheck[2], 2, autoName[2])"> Auto Hunt </button>' + 
-'<button id="autoTrade" onclick="autoSwitch(autoCheck[3], 3, autoName[3])"> Auto Trade </button>' +
-'<button id="autoPraise" onclick="autoSwitch(autoCheck[4], 4, autoName[4])"> Auto Praise </button>' +
+'<button id="autoHunt" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
+'<button id="autoTrade" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
+'<button id="autoPraise" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
+'<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
+'<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br></br>' +
 '<text id="tickDownTime"></text>' +
-'</div>' 
+'</div>' +
+'</div>'
 
 $("#footerLinks").append(htmlMenuAddition);
 
@@ -131,6 +140,14 @@ function verifyBuildingSelected(buildingNumber, buildingCheckID) {
 
 $("#game").append(bldSelectAddition);
 
+function clearOptionHelpDiv() {
+	$("#optionSelect").hide();
+}
+
+function selectOptions() {
+	$("#optionSelect").toggle();
+}
+
 function clearHelpDiv() {
 	$("#buildingSelect").hide();
 }
@@ -143,13 +160,15 @@ function setFurValue() {
 	furDerVal = $('#craftFur').val();
 }
 
-function autoSwitch(varCheck, varNumber, textChange) {
+function autoSwitch(varCheck, varNumber, textChange, varName) {
 	if (varCheck == "false") {
 		autoCheck[varNumber] = "true";
 		gamePage.msg('Auto' + textChange + ' is now on');
+		document.getElementById(varName).style.color = 'black';
 	} else if (varCheck == "true") {
 		autoCheck[varNumber] = "false";
 		gamePage.msg('Auto' + textChange + ' is now off');
+		document.getElementById(varName).style.color = 'red';
 	}
 }
 
@@ -162,9 +181,12 @@ function clearScript() {
 	$("#autoHunt").remove();
 	$("#autoTrade").remove();
 	$("#autoPraise").remove();
+	$("#autoScience").remove();
+	$("#autoUpgrade").remove();
 	$("#farRightColumn").remove();
 	$("#craftFur").remove();
 	$("#buildingSelect").remove();
+	$("#scriptOptions").remove();
 	clearInterval(autoObserve);
 	clearInterval(autoRun);
 	clearInterval(tickTimer);
@@ -275,6 +297,45 @@ if (gamePage.resPool.get('faith').value / gamePage.resPool.get('faith').maxValue
 	gamePage.religion.praise();
 	} else {
 }
+}
+
+		// Test auto Research capabilities!
+if (autoCheck[5] != "false") {
+	var origTab = gamePage.ui.activeTabId;
+      
+	gamePage.ui.activeTabId = 'Science'; gamePage.render();
+	  
+	var techs = gamePage.science.techs;
+
+	 for (var i = 0; i < techs.length; i++) {
+		if (techs[i].unlocked && techs[i].researched != true) {
+			$(".btnContent:contains('" + techs[i].label + "')").click();
+
+			}
+		}
+	  
+      if (origTab != gamePage.ui.activeTabId) {
+        gamePage.ui.activeTabId = origTab; gamePage.render();
+      }
+}
+
+		// Test auto Workshop upgrade capabilities!
+if (autoCheck[6] != "false") {
+var origTab = gamePage.ui.activeTabId;
+      
+	gamePage.ui.activeTabId = 'Workshop'; gamePage.render();
+	  
+	var upgrades = gamePage.workshop.upgrades;
+	  
+	 for (var i = 0; i < upgrades.length; i++) {
+		if (upgrades[i].unlocked && upgrades[i].researched != true) {
+			$(".btnContent:contains('" + upgrades[i].label + "')").click();
+			}
+		}
+	 	  
+      if (origTab != gamePage.ui.activeTabId) {
+        gamePage.ui.activeTabId = origTab; gamePage.render();
+      }	
 }
 
 }, 30000 );
