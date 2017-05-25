@@ -300,7 +300,7 @@ if (gamePage.resPool.get('faith').value / gamePage.resPool.get('faith').maxValue
 }
 
 		// Test auto Research capabilities!
-if (autoCheck[5] != "false") {
+if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var origTab = gamePage.ui.activeTabId;
       
 	gamePage.ui.activeTabId = 'Science'; gamePage.render();
@@ -320,7 +320,7 @@ if (autoCheck[5] != "false") {
 }
 
 		// Test auto Workshop upgrade capabilities!
-if (autoCheck[6] != "false") {
+if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
 var origTab = gamePage.ui.activeTabId;
       
 	gamePage.ui.activeTabId = 'Workshop'; gamePage.render();
