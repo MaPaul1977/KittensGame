@@ -179,18 +179,6 @@ function kittenEfficiency() {
 	gamePage.msg("Your current efficiency is " + parseFloat(curEfficiency).toFixed(2) + " kittens per hour.");
 }
 
-clearInterval(tickTimer);
-var tickTimer = setInterval(function() {
-
-	tickDownCounter = tickDownCounter - 1;
-	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + tickDownCounter + ' seconds left till the script executes again.');
-	
-	if (tickDownCounter == 0) {
-	tickDownCounter = 30;
-	}
-	
-}, 1000);
-
 clearInterval(autoObserve);
 var autoObserve = setInterval(function() {
 		// Auto Observe Astronomical Events
@@ -205,6 +193,7 @@ var autoObserve = setInterval(function() {
 
 clearInterval(autoRun);
 var autoRun = setInterval(function() {
+	tickDownCounter = 30;
 	
         var resources = [
        		["catnip", "wood", 50],
@@ -272,6 +261,14 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 	}
 }
 
+clearInterval(tickTimer);
+var tickTimer = setInterval(function() {
+
+	tickDownCounter = tickDownCounter - 1;
+	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + tickDownCounter + ' seconds left till the script executes again.');
+	
+}, 1000);	
+	
 if (autoCheck[4] != "false") {
 		// Auto praise the sun
 if (gamePage.resPool.get('faith').value / gamePage.resPool.get('faith').maxValue > 0.95) {
