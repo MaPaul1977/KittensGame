@@ -191,6 +191,14 @@ var autoObserve = setInterval(function() {
 }
 }, 500);
 
+clearInterval(tickTimer);
+var tickTimer = setInterval(function() {
+
+	tickDownCounter = tickDownCounter - 1;
+	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + tickDownCounter + ' seconds left till the script executes again.');
+	
+}, 1000);
+
 clearInterval(autoRun);
 var autoRun = setInterval(function() {
 	tickDownCounter = 30;
@@ -260,14 +268,6 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 		}
 	}
 }
-
-clearInterval(tickTimer);
-var tickTimer = setInterval(function() {
-
-	tickDownCounter = tickDownCounter - 1;
-	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + tickDownCounter + ' seconds left till the script executes again.');
-	
-}, 1000);	
 	
 if (autoCheck[4] != "false") {
 		// Auto praise the sun
