@@ -216,7 +216,7 @@ var autoRun = setInterval(function() {
                 ];
 		
 		// Build buildings automatically
-if (autoCheck[0] != "false") {
+if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	for (var i = 0; i < buildings.length; i++) {
 		if (buildings[i][1] != false){
 			$(".btnContent:contains('" + (buildings[i][0]) + "')").click();
