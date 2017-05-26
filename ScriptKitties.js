@@ -68,7 +68,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoPraise" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br></br>' +
-'<text id="tickDownTime"></text>' +
+'</ br><text id="tickDownTime"></text>' +
 '</div>' +
 '</div>'
 
@@ -208,9 +208,15 @@ var autoObserve = setInterval(function() {
 		var checkObserveBtn = document.getElementById("observeBtn");
 		if (typeof(checkObserveBtn) != 'undefined' && checkObserveBtn != null) {
 		document.getElementById('observeBtn').click();
-		
+				
 } else {
 }
+
+if (autoCheck[4] != "false") {
+		// Auto praise the sun
+			gamePage.religion.praise();
+}
+
 }, 500);
 
 clearInterval(tickTimer);
@@ -247,7 +253,7 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 		}
 	}
 }
-	
+
 if (autoCheck[3] != "false") {
 		// Trade automatically
 	var titRes = gamePage.resPool.get('titanium');
@@ -291,14 +297,6 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 	}
 }
 	
-if (autoCheck[4] != "false") {
-		// Auto praise the sun
-if (gamePage.resPool.get('faith').value / gamePage.resPool.get('faith').maxValue > 0.95) {
-	gamePage.religion.praise();
-	} else {
-}
-}
-
 		// Test auto Research capabilities!
 if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var origTab = gamePage.ui.activeTabId;
