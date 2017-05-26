@@ -1,4 +1,4 @@
-# KittensGame
+# ScriptKitties
 Kittens Game Scripts
 
 If you want to use this, feel free to bookmark:
