@@ -134,9 +134,7 @@ $("#hutChecker").click(function() {
 
 function verifyBuildingSelected(buildingNumber, buildingCheckID) {
 	var bldIsChecked = document.getElementById(buildingCheckID).checked;
-	console.log(bldIsChecked);
 	buildings[buildingNumber][1] = bldIsChecked;
-	console.log(buildings[buildingNumber][0]);
 }
 
 $("#game").append(bldSelectAddition);
