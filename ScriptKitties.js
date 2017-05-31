@@ -1,9 +1,10 @@
 var autoCheck = ['true', 'true', 'true', 'true', 'true', 'false', 'false'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade'];
 
-var tickDownCounter = 30;
+var tickDownCounter = 1;
 var deadScript = "Script is dead";
 var furDerVal = 3;
+var arr = [];
 
 var buildings = [
 		["Hut", false], // 0
@@ -42,6 +43,18 @@ var buildings = [
 		["Ziggurat", false], // 33
 		["Chronosphere", false] // 34
 		];	
+
+var resources = [
+       		["catnip", "wood", 50],
+            ["wood", "beam", 175],
+        	["minerals", "slab", 250],
+            ["coal", "steel", 100],
+        	["iron", "plate", 125],
+            ["oil", "kerosene", 1000],
+            ["titanium", "alloy", 75],
+            ["uranium", "thorium", 250],
+			["unobtainium", "eludium", 1000]
+                ];
 
 var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
@@ -186,9 +199,7 @@ function clearScript() {
 	$("#craftFur").remove();
 	$("#buildingSelect").remove();
 	$("#scriptOptions").remove();
-	clearInterval(autoObserve);
-	clearInterval(autoRun);
-	clearInterval(tickTimer);
+	clearInterval(runAllAutomation);
 	autoBuildCheck = null;
 }
 
@@ -200,84 +211,93 @@ function kittenEfficiency() {
 	gamePage.msg("Your current efficiency is " + parseFloat(curEfficiency).toFixed(2) + " kittens per hour.");
 }
 
-clearInterval(autoObserve);
-var autoObserve = setInterval(function() {
+
+/* These are the functions which are controlled by the runAllAutomation timer */
+/* These are the functions which are controlled by the runAllAutomation timer */
+/* These are the functions which are controlled by the runAllAutomation timer */
+/* These are the functions which are controlled by the runAllAutomation timer */
+/* These are the functions which are controlled by the runAllAutomation timer */
+
 		// Auto Observe Astronomical Events
+function autoObserve() {
 
 		var checkObserveBtn = document.getElementById("observeBtn");
 		if (typeof(checkObserveBtn) != 'undefined' && checkObserveBtn != null) {
-		document.getElementById('observeBtn').click();
+			document.getElementById('observeBtn').click();
 				
-} else {
-}
+		} else {
+		}
 
-if (autoCheck[4] != "false") {
-		// Auto praise the sun
+}
+	
+	// Auto praise the sun
+function autoPraise(){
+	if (autoCheck[4] != "false") {
 			gamePage.religion.praise();
-}
-
-}, 500);
-
-clearInterval(tickTimer);
-var tickTimer = setInterval(function() {
-
-	tickDownCounter = tickDownCounter - 1;
-	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + tickDownCounter + ' seconds left till the script executes again.');
-	
-}, 1000);
-
-clearInterval(autoRun);
-var autoRun = setInterval(function() {
-	tickDownCounter = 30;
-	
-        var resources = [
-       		["catnip", "wood", 50],
-            ["wood", "beam", 175],
-        	["minerals", "slab", 250],
-            ["coal", "steel", 100],
-        	["iron", "plate", 125],
-            ["oil", "kerosene", 1000],
-            ["titanium", "alloy", 75],
-            ["uranium", "thorium", 250],
-			["unobtainium", "eludium", 1000]
-                ];
-		
-		// Build buildings automatically
-if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
-	for (var i = 0; i < buildings.length; i++) {
-		if (buildings[i][1] != false){
-			$(".btnContent:contains('" + (buildings[i][0]) + "')").click();
-		}
-		else {
-		}
 	}
 }
 
-if (autoCheck[3] != "false") {
-		// Trade automatically
-	var titRes = gamePage.resPool.get('titanium');
-	var goldResource = gamePage.resPool.get('gold');
-    var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
-		if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
-			if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
-			} else if (gamePage.diplomacy.get('dragons').unlocked) {
-				gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
-			}
-		}
-}
+	// Display time left till next series of building/hunting/crafting
+function tickTimer() {
+
+	a = gamePage.timer.ticksTotal - tickDownCounter;
+	b = 150 - a;
+	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + b + ' ticks left till the script executes again.');
 	
-if (autoCheck[2] != "false") {		
+}
+				
+		// Build buildings automatically
+function autoBuild() {		
+		
+		// Establish what is buildable
+	var arr = [];
+		for (var i = 0; i < buildings.length; i++) {
+			if (buildings[i][1] != false && $(".btnContent:contains('" + (buildings[i][0]) + "')").parent(".btn.nosel.modern").length){
+				arr.push(buildings[i][0]);
+			}
+			else {
+			}
+			
+		}
+	
+	if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
+		
+		for (var i = 0; i < arr.length; i++) {
+			$(".btn.nosel.modern > .btnContent:contains('" + (arr[i]) + "')").trigger("click");
+		}
+	}
+}			
+	
+		// Trade automatically
+function autoTrade() {
+	if (autoCheck[3] != "false") {
+		var titRes = gamePage.resPool.get('titanium');
+		var goldResource = gamePage.resPool.get('gold');
+		var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
+			if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
+				if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
+					gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
+				} else if (gamePage.diplomacy.get('dragons').unlocked) {
+					gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
+				}
+			}
+	}
+}
+
 		// Hunt automatically
+function autoHunt() {
+if (autoCheck[2] != "false") {	
 	var catpower = gamePage.resPool.get('manpower');
 	var catpowerOneTwenty = gamePage.getResourcePerTick('manpower') * 200;
 		if (catpower.value > (catpower.maxValue - catpowerOneTwenty)) {
 			gamePage.village.huntMultiple(catpowerOneTwenty / 100);
 		}
 }	
+}
 
-if (autoCheck[1] != "false") {
+function autoCraft() {
 		// Craft high level resources automatically
+if (autoCheck[1] != "false") {
 for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
     var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
@@ -294,9 +314,11 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 				gamePage.craftAll(furDerivatives[i]); 
 		}
 	}
+}	
 }
-	
-		// Test auto Research capabilities!
+
+function autoResearch() {	
+		// Auto Research
 if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var origTab = gamePage.ui.activeTabId;
       
@@ -315,8 +337,10 @@ if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
         gamePage.ui.activeTabId = origTab; gamePage.render();
       }
 }
+}
 
-		// Test auto Workshop upgrade capabilities!
+function autoWorkshop() {
+		// Auto Workshop upgrade
 if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
 var origTab = gamePage.ui.activeTabId;
       
@@ -335,4 +359,28 @@ var origTab = gamePage.ui.activeTabId;
       }	
 }
 
-}, 30000 );
+}
+
+		// This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
+clearInterval(runAllAutomation);
+var runAllAutomation = setInterval(function() {
+
+	autoPraise();
+	tickTimer();
+	
+	if (gamePage.timer.ticksTotal % 3 === 0) {
+		autoObserve();
+	}
+	
+	if (gamePage.timer.ticksTotal % 150 === 0) {
+		
+		tickDownCounter = gamePage.timer.ticksTotal;
+		autoBuild();
+		autoTrade();
+		autoHunt();
+		autoCraft();
+		autoResearch();
+		autoWorkshop();
+	}
+
+}, 200);
