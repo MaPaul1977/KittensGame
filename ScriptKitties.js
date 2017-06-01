@@ -1,5 +1,5 @@
-var autoCheck = ['true', 'true', 'true', 'true', 'true', 'false', 'false'];
-var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade'];
+var autoCheck = ['true', 'true', 'true', 'true', 'true', 'false', 'false', 'false'];
+var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party'];
 
 var tickDownCounter = 1;
 var deadScript = "Script is dead";
@@ -50,7 +50,7 @@ var resources = [
         	["minerals", "slab", 250],
             ["coal", "steel", 100],
         	["iron", "plate", 125],
-            ["oil", "kerosene", 1000],
+            ["oil", "kerosene", 7500],
             ["titanium", "alloy", 75],
             ["uranium", "thorium", 250],
 			["unobtainium", "eludium", 1000]
@@ -80,7 +80,8 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoTrade" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
 '<button id="autoPraise" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
-'<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br></br>' +
+'<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br>' +
+'<button id="autoParty" style="color:red" onclick="autoSwitch(autoCheck[7], 7, autoName[7], \'autoParty\')"> Auto Party </button></br></br>' + 
 '</ br><text id="tickDownTime"></text>' +
 '</div>' +
 '</div>'
@@ -195,6 +196,7 @@ function clearScript() {
 	$("#autoPraise").remove();
 	$("#autoScience").remove();
 	$("#autoUpgrade").remove();
+	$("#autoParty").remove();
 	$("#farRightColumn").remove();
 	$("#craftFur").remove();
 	$("#buildingSelect").remove();
@@ -275,7 +277,7 @@ function autoTrade() {
 		var goldResource = gamePage.resPool.get('gold');
 		var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 			if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
-				if (titRes.value != titRes.maxValue  && gamePage.diplomacy.get('zebras').unlocked) {
+				if (titRes.value < (titRes.maxValue * 0.9)  && gamePage.diplomacy.get('zebras').unlocked) {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
 				} else if (gamePage.diplomacy.get('dragons').unlocked) {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
@@ -288,9 +290,8 @@ function autoTrade() {
 function autoHunt() {
 if (autoCheck[2] != "false") {	
 	var catpower = gamePage.resPool.get('manpower');
-	var catpowerOneTwenty = gamePage.getResourcePerTick('manpower') * 200;
-		if (catpower.value > (catpower.maxValue - catpowerOneTwenty)) {
-			gamePage.village.huntMultiple(catpowerOneTwenty / 100);
+		if (catpower.value > (catpower.maxValue - 1)) {
+			gamePage.village.huntAll();
 		}
 }	
 }
@@ -301,9 +302,9 @@ if (autoCheck[1] != "false") {
 for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
     var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
-    var resourceOneTwenty = (resourcePerTick * 200);
-		if (curRes.value > (curRes.maxValue - resourceOneTwenty) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
-		gamePage.craft(resources[i][1], (resourceOneTwenty / resources[i][2]));
+    var resourcePerCraft = (resourcePerTick * 3);
+		if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
+		gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
 		}
 	}
 	
@@ -361,6 +362,20 @@ var origTab = gamePage.ui.activeTabId;
 
 }
 
+		// Festival automatically
+function autoParty() {
+	if (autoCheck[7] != "false") {
+		var catpower = gamePage.resPool.get('manpower').value;
+		var culture = gamePage.resPool.get('culture').value;
+		var parchment = gamePage.resPool.get('parchment').value;
+	
+		if (catpower > 1500 && culture > 5000 && parchment > 2500) {
+			gamePage.village.holdFestival(1);
+		}
+	
+	}
+}
+
 		// This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
@@ -370,17 +385,18 @@ var runAllAutomation = setInterval(function() {
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
+		autoCraft();
+		autoHunt();
 	}
 	
 	if (gamePage.timer.ticksTotal % 150 === 0) {
 		
 		tickDownCounter = gamePage.timer.ticksTotal;
-		autoBuild();
-		autoTrade();
-		autoHunt();
-		autoCraft();
+		autoParty();
+		autoTrade();		
 		autoResearch();
 		autoWorkshop();
+		autoBuild();
 	}
 
 }, 200);
