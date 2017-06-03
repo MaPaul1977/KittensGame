@@ -1,49 +1,80 @@
-var autoCheck = ['true', 'true', 'true', 'true', 'true', 'false', 'false', 'false'];
+var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party'];
 
 var tickDownCounter = 1;
 var deadScript = "Script is dead";
 var furDerVal = 3;
 var arr = [];
+var resList = [];
 
 var buildings = [
-		["Hut", false], // 0
-		["Log House", false], // 1
-		["Mansion", false], // 2
-		["Workshop", false], // 3
-		["Factory", false], // 4
-		["Catnip field", false], // 5
-		["Pasture", false], // 6
-		["Solar Farm", false], // 7
-		["Mine", false], // 8
-		["Lumber Mill", false], // 9
-		["Aqueduct", false], // 10
-		["Hydro Plant", false], // 11
-		["Oil Well", false], // 12
-		["Quarry", false], // 13
-		["Smelter", false], // 14
-		["Bio Lab", false], // 15
-		["Calciner", false], // 16
-		["Reactor", false], // 17
-		["Accelerator", false], // 18
-		["Steamworks", false], // 19
-		["Magneto", false], // 20
-		["Library", false], // 21
-		["Academy", false], // 22
-		["Observatory", false], // 23
-		["Barn", false], // 24
-		["Harbour", false], // 25
-		["Warehouse", false], // 26
-		["Amphitheatre", false], // 27
-		["Broadcast Tower", false], // 28
-		["Tradepost", false], // 29
-		["Chapel", false], // 30
-		["Temple", false], // 31
-		["Mint", false], // 32
-		["Ziggurat", false], // 33
-		["Chronosphere", false] // 34
+		["Hut", false], 
+		["Log House", false], 
+		["Mansion", false], 
+		["Workshop", false], 
+		["Factory", false], 
+		["Catnip field", false], 
+		["Pasture", false], 
+		["Mine", false], 
+		["Lumber Mill", false], 
+		["Aqueduct", false], 
+		["Oil Well", false], 
+		["Quarry", false], 
+		["Smelter", false], 
+		["Bio Lab", false], 
+		["Calciner", false], 
+		["Reactor", false], 
+		["Accelerator", false], 
+		["Steamworks", false], 
+		["Magneto", false], 
+		["Library", false], 
+		["Academy", false], 
+		["Observatory", false], 
+		["Barn", false], 
+		["Harbour", false], 
+		["Warehouse", false], 
+		["Amphitheatre", false], 
+		["Tradepost", false], 
+		["Chapel", false], 
+		["Temple", false], 
+		["Mint", false],
+		["Ziggurat", false]
 		];	
-
+		
+var buildingsList = [
+		["hut"], 
+		["logHouse"], 
+		["mansion"], 
+		["workshop"], 
+		["factory"], 
+		["field"], 
+		["pasture"], 
+		["mine"], 
+		["lumberMill"], 
+		["aqueduct"], 
+		["oilWell"], 
+		["quarry"], 
+		["smelter"], 
+		["biolab"], 
+		["calciner"], 
+		["reactor"], 
+		["accelerator"], 
+		["steamworks"], 
+		["magneto"], 
+		["library"], 
+		["academy"], 
+		["observatory"], 
+		["barn"], 
+		["harbor"], 
+		["warehouse"], 
+		["amphitheatre"], 
+		["tradepost"], 
+		["chapel"], 
+		["temple"], 
+		["mint"], 
+		["ziggurat"]
+		];	
+		
 var resources = [
        		["catnip", "wood", 50],
             ["wood", "beam", 175],
@@ -55,6 +86,14 @@ var resources = [
             ["uranium", "thorium", 250],
 			["unobtainium", "eludium", 1000]
                 ];
+				
+var secondaryResources = [
+			["beam", "scaffold", 50],
+			["steel", "gear", 15],
+			["ship", "starchart", 25],
+			["beam", "megalith", 25],
+			["slab", "concrete", 2500]
+			]
 
 var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
@@ -65,10 +104,10 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
 '<button id="efficiencyButton" onclick="kittenEfficiency()">Check Efficiency</button></br></br>' +
-'<button id="autoBuild" onclick="autoSwitch(autoCheck[0], 0, autoName[0], \'autoBuild\');"> Auto Build </button></br>' + 
+'<button id="autoBuild" style="color:red" onclick="autoSwitch(autoCheck[0], 0, autoName[0], \'autoBuild\');"> Auto Build </button></br>' + 
 '<button id="bldSelect" onclick="selectBuildings()">Select Building</button></br>' +
 
-'<button id="autoCraft" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
+'<button id="autoCraft" style="color:red" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
 '<select id="craftFur" size="1" onclick="setFurValue()">' +
 '<option value="1" selected="selected">Parchment</option>' +
 '<option value="2">Manuscript</option>' +
@@ -76,9 +115,9 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<option value="4">Blueprint</option>' +
 '</select></br>' +
 
-'<button id="autoHunt" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
-'<button id="autoTrade" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
-'<button id="autoPraise" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
+'<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
+'<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
+'<button id="autoPraise" style="color:red" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br>' +
 '<button id="autoParty" style="color:red" onclick="autoSwitch(autoCheck[7], 7, autoName[7], \'autoParty\')"> Auto Party </button></br></br>' + 
@@ -103,42 +142,38 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 '	<input type="checkbox" id="prodChecker"><label for="prodChecker" onclick="$(\'.prodCheck\').click();"><b>Production</b></label><br>' + 
 '	<input type="checkbox" id="fieldBld" class="prodCheck" onchange="verifyBuildingSelected(\'5\', \'fieldBld\')"><label for="fieldBld">Catnip Field</label><br>' + 
 '	<input type="checkbox" id="pastureBld" class="prodCheck" onchange="verifyBuildingSelected(\'6\', \'pastureBld\')"><label for="pastureBld">Pasture</label><br>' + 
-'	<input type="checkbox" id="solarBld" class="prodCheck" onchange="verifyBuildingSelected(\'7\', \'solarBld\')"><label for="solarBld">Solar Farm</label><br>' + 
-'	<input type="checkbox" id="mineBld" class="prodCheck" onchange="verifyBuildingSelected(\'8\', \'mineBld\')"><label for="mineBld">Mine</label><br>' + 
-'	<input type="checkbox" id="lumberBld" class="prodCheck" onchange="verifyBuildingSelected(\'9\', \'lumberBld\')"><label for="lumberBld">Lumber Mill</label><br>' + 
-'	<input type="checkbox" id="aqueductBld" class="prodCheck" onchange="verifyBuildingSelected(\'10\', \'aqueductBld\')"><label for="aqueductBld">Aqueduct</label><br>' + 
-'	<input type="checkbox" id="hydroBld" class="prodCheck" onchange="verifyBuildingSelected(\'11\', \'hydroBld\')"><label for="hydroBld">Hydro Plant</label><br>' + 
-'	<input type="checkbox" id="oilBld" class="prodCheck" onchange="verifyBuildingSelected(\'12\', \'oilBld\')"><label for="oilBld">Oil Well</label><br>' + 
-'	<input type="checkbox" id="quarryBld" class="prodCheck" onchange="verifyBuildingSelected(\'13\', \'quarryBld\')"><label for="quarryBld">Quarry</label><br><br>' + 
+'	<input type="checkbox" id="mineBld" class="prodCheck" onchange="verifyBuildingSelected(\'7\', \'mineBld\')"><label for="mineBld">Mine</label><br>' + 
+'	<input type="checkbox" id="lumberBld" class="prodCheck" onchange="verifyBuildingSelected(\'8\', \'lumberBld\')"><label for="lumberBld">Lumber Mill</label><br>' + 
+'	<input type="checkbox" id="aqueductBld" class="prodCheck" onchange="verifyBuildingSelected(\'9\', \'aqueductBld\')"><label for="aqueductBld">Aqueduct</label><br>' + 
+'	<input type="checkbox" id="oilBld" class="prodCheck" onchange="verifyBuildingSelected(\'10\', \'oilBld\')"><label for="oilBld">Oil Well</label><br>' + 
+'	<input type="checkbox" id="quarryBld" class="prodCheck" onchange="verifyBuildingSelected(\'11\', \'quarryBld\')"><label for="quarryBld">Quarry</label><br><br>' + 
 
 '	<input type="checkbox" id="conversionChecker"><label for="conversionChecker" onclick="$(\'.convertCheck\').click();"><b>Conversion</b></label><br>' + 
-'	<input type="checkbox" id="smelterBld" class="convertCheck" onchange="verifyBuildingSelected(\'14\', \'smelterBld\')"><label for="smelterBld">Smelter</label><br>' + 
-'	<input type="checkbox" id="labBld" class="convertCheck" onchange="verifyBuildingSelected(\'15\', \'labBld\')"><label for="labBld">Bio Lab</label><br>' + 
-'	<input type="checkbox" id="calcinerBld" class="convertCheck" onchange="verifyBuildingSelected(\'16\', \'calcinerBld\')"><label for="calcinerBld">Calciner</label><br>' + 
-'	<input type="checkbox" id="reactorBld" class="convertCheck" onchange="verifyBuildingSelected(\'17\', \'reactorBld\')"><label for="reactorBld">Reactor</label><br>' + 
-'	<input type="checkbox" id="acceleratorBld" class="convertCheck" onchange="verifyBuildingSelected(\'18\', \'acceleratorBld\')"><label for="acceleratorBld">Accelerator</label><br>' + 
-'	<input type="checkbox" id="steamBld" class="convertCheck" onchange="verifyBuildingSelected(\'19\', \'steamBld\')"><label for="steamBld">Steamworks</label><br>' + 
-'	<input type="checkbox" id="magnetoBld" class="convertCheck" onchange="verifyBuildingSelected(\'20\', \'magnetoBld\')"><label for="magnetoBld">Magneto</label><br><br>' + 
+'	<input type="checkbox" id="smelterBld" class="convertCheck" onchange="verifyBuildingSelected(\'12\', \'smelterBld\')"><label for="smelterBld">Smelter</label><br>' + 
+'	<input type="checkbox" id="labBld" class="convertCheck" onchange="verifyBuildingSelected(\'13\', \'labBld\')"><label for="labBld">Bio Lab</label><br>' + 
+'	<input type="checkbox" id="calcinerBld" class="convertCheck" onchange="verifyBuildingSelected(\'14\', \'calcinerBld\')"><label for="calcinerBld">Calciner</label><br>' + 
+'	<input type="checkbox" id="reactorBld" class="convertCheck" onchange="verifyBuildingSelected(\'15\', \'reactorBld\')"><label for="reactorBld">Reactor</label><br>' + 
+'	<input type="checkbox" id="acceleratorBld" class="convertCheck" onchange="verifyBuildingSelected(\'16\', \'acceleratorBld\')"><label for="acceleratorBld">Accelerator</label><br>' + 
+'	<input type="checkbox" id="steamBld" class="convertCheck" onchange="verifyBuildingSelected(\'17\', \'steamBld\')"><label for="steamBld">Steamworks</label><br>' + 
+'	<input type="checkbox" id="magnetoBld" class="convertCheck" onchange="verifyBuildingSelected(\'18\', \'magnetoBld\')"><label for="magnetoBld">Magneto</label><br><br>' + 
 
 '	<input type="checkbox" id="scienceChecker"><label for="scienceChecker" onclick="$(\'.scienceCheck\').click();"><b>Science</b></label><br>' + 
-'	<input type="checkbox" id="libraryBld" class="scienceCheck" onchange="verifyBuildingSelected(\'21\', \'libraryBld\')"><label for="libraryBld">Library</label><br>' + 
-'	<input type="checkbox" id="academyBld" class="scienceCheck" onchange="verifyBuildingSelected(\'22\', \'academyBld\')"><label for="academyBld">Academy</label><br>' + 
-'	<input type="checkbox" id="obervatoryBld" class="scienceCheck" onchange="verifyBuildingSelected(\'23\', \'obervatoryBld\')"><label for="obervatoryBld">Observatory</label><br><br>' + 
+'	<input type="checkbox" id="libraryBld" class="scienceCheck" onchange="verifyBuildingSelected(\'19\', \'libraryBld\')"><label for="libraryBld">Library</label><br>' + 
+'	<input type="checkbox" id="academyBld" class="scienceCheck" onchange="verifyBuildingSelected(\'20\', \'academyBld\')"><label for="academyBld">Academy</label><br>' + 
+'	<input type="checkbox" id="obervatoryBld" class="scienceCheck" onchange="verifyBuildingSelected(\'21\', \'obervatoryBld\')"><label for="obervatoryBld">Observatory</label><br><br>' + 
 
 '	<input type="checkbox" id="storageChecker"><label for="storageChecker" onclick="$(\'.storageCheck\').click();"><b>Storage</b></label><br>' + 
-'	<input type="checkbox" id="barnBld" class="storageCheck" onchange="verifyBuildingSelected(\'24\', \'barnBld\')"><label for="barnBld">Barn</label><br>' + 
-'	<input type="checkbox" id="harborBld" class="storageCheck" onchange="verifyBuildingSelected(\'25\', \'harborBld\')"><label for="harborBld">Harbor</label><br>' + 
-'	<input type="checkbox" id="warehouseBld" class="storageCheck" onchange="verifyBuildingSelected(\'26\', \'warehouseBld\')"><label for="warehouseBld">Warehouse</label><br><br>' + 
+'	<input type="checkbox" id="barnBld" class="storageCheck" onchange="verifyBuildingSelected(\'22\', \'barnBld\')"><label for="barnBld">Barn</label><br>' + 
+'	<input type="checkbox" id="harborBld" class="storageCheck" onchange="verifyBuildingSelected(\'23\', \'harborBld\')"><label for="harborBld">Harbor</label><br>' + 
+'	<input type="checkbox" id="warehouseBld" class="storageCheck" onchange="verifyBuildingSelected(\'24\', \'warehouseBld\')"><label for="warehouseBld">Warehouse</label><br><br>' + 
 
 '	<input type="checkbox" id="otherChecker"><label for="otherChecker" onclick="$(\'.otherCheck\').click();"><b>Other</b></label><br>' + 
-'	<input type="checkbox" id="ampBld" class="otherCheck" onchange="verifyBuildingSelected(\'27\', \'ampBld\')"><label for="ampBld">Amphitheatre</label><br>' + 
-'	<input type="checkbox" id="towerBld" class="otherCheck" onchange="verifyBuildingSelected(\'28\', \'towerBld\')"><label for="towerBld">Broadcast Tower</label><br>' + 
-'	<input type="checkbox" id="tradeBld" class="otherCheck" onchange="verifyBuildingSelected(\'29\', \'tradeBld\')"><label for="tradeBld">Tradepost</label><br>' + 
-'	<input type="checkbox" id="chapelBld" class="otherCheck" onchange="verifyBuildingSelected(\'30\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
-'	<input type="checkbox" id="templeBld" class="otherCheck" onchange="verifyBuildingSelected(\'31\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
-'	<input type="checkbox" id="mintBld" class="otherCheck" onchange="verifyBuildingSelected(\'32\', \'mintBld\')"><label for="mintBld">Mint</label><br>' + 
-'	<input type="checkbox" id="zigguratBld" class="otherCheck" onchange="verifyBuildingSelected(\'33\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br>' + 
-'	<input type="checkbox" id="chronoBld" class="otherCheck" onchange="verifyBuildingSelected(\'34\', \'chronoBld\')"><label for="chronoBld">Chronosphere</label><br><br>' + 
+'	<input type="checkbox" id="ampBld" class="otherCheck" onchange="verifyBuildingSelected(\'25\', \'ampBld\')"><label for="ampBld">Amphitheatre</label><br>' + 
+'	<input type="checkbox" id="tradeBld" class="otherCheck" onchange="verifyBuildingSelected(\'26\', \'tradeBld\')"><label for="tradeBld">Tradepost</label><br>' + 
+'	<input type="checkbox" id="chapelBld" class="otherCheck" onchange="verifyBuildingSelected(\'27\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
+'	<input type="checkbox" id="templeBld" class="otherCheck" onchange="verifyBuildingSelected(\'28\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
+'	<input type="checkbox" id="mintBld" class="otherCheck" onchange="verifyBuildingSelected(\'29\', \'mintBld\')"><label for="mintBld">Mint</label><br>' + 
+'	<input type="checkbox" id="zigguratBld" class="otherCheck" onchange="verifyBuildingSelected(\'30\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br></br>' + 
 
 '</div>'
 
@@ -220,6 +255,7 @@ function kittenEfficiency() {
 /* These are the functions which are controlled by the runAllAutomation timer */
 /* These are the functions which are controlled by the runAllAutomation timer */
 
+
 		// Auto Observe Astronomical Events
 function autoObserve() {
 
@@ -234,7 +270,7 @@ function autoObserve() {
 	
 	// Auto praise the sun
 function autoPraise(){
-	if (autoCheck[4] != "false") {
+	if (autoCheck[4] != "false" && gamePage.science.techs[16].unlocked) {
 			gamePage.religion.praise();
 	}
 }
@@ -242,32 +278,39 @@ function autoPraise(){
 	// Display time left till next series of building/hunting/crafting
 function tickTimer() {
 
-	a = gamePage.timer.ticksTotal - tickDownCounter;
-	b = 150 - a;
-	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + b + ' ticks left till the script executes again.');
+	a = Math.abs(150 - (gamePage.timer.ticksTotal - tickDownCounter));
+	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + a + ' ticks left till the script executes again.');
+	
+}
+
+		// Check to see if we have the resources to make the building
+function hasRes(strangeVarNumberWhat){
+	
+	var booTest = true;
+	var pAr = gamePage.bld.getPrices(strangeVarNumberWhat);
+	for (i = 0; i < pAr.length; i++) {
+		var resName = pAr[i].name;
+		if (pAr[i].val < gamePage.resPool.get(resName).value && booTest != false) {
+			
+		} else {
+			booTest = false;
+		}
+	}
+	return booTest;
 	
 }
 				
 		// Build buildings automatically
 function autoBuild() {		
-		
-		// Establish what is buildable
-	var arr = [];
-		for (var i = 0; i < buildings.length; i++) {
-			if (buildings[i][1] != false && $(".btnContent:contains('" + (buildings[i][0]) + "')").parent(".btn.nosel.modern").length){
-				arr.push(buildings[i][0]);
-			}
-			else {
-			}
-			
-		}
+if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	
-	if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
-		
-		for (var i = 0; i < arr.length; i++) {
-			$(".btn.nosel.modern > .btnContent:contains('" + (arr[i]) + "')").trigger("click");
-		}
+	for (var i = 0; i < buildings.length; i++) {
+		if (buildings[i][1] != false && hasRes(buildingsList[i]) !=false) {
+				$(".btnContent:contains('" + (buildings[i][0]) + "')").trigger("click");
+			}
 	}
+	
+}
 }			
 	
 		// Trade automatically
@@ -297,7 +340,7 @@ if (autoCheck[2] != "false") {
 }
 
 function autoCraft() {
-		// Craft high level resources automatically
+		// Craft primary resources automatically
 if (autoCheck[1] != "false") {
 for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
@@ -308,6 +351,15 @@ for (var i = 0; i < resources.length; i++) {
 		}
 	}
 	
+		// Craft secondary resources automatically
+for (var i = 0; i < secondaryResources.length; i++) {
+	var priRes = gamePage.resPool.get(secondaryResources[i][0]);
+	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
+	var resMath = priRes.value / secondaryResources[i][2];
+	if (resMath > 1 && secRes.value < (priRes.value / 5) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
+		gamePage.craft(secondaryResources[i][1], (priRes.value / 5));
+	}
+}	
 		//Craft the fur derivatives
 var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 	for (var i = 0; i < furDerVal; i++) {
@@ -400,3 +452,4 @@ var runAllAutomation = setInterval(function() {
 	}
 
 }, 200);
+
