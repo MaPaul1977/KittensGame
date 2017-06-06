@@ -1,11 +1,24 @@
-var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
-var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party'];
+ // These control the button statuses
+var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
+var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy'];
 
+ // These will allow quick selection of the buildings which consume energy
+var bldSmelter = gamePage.bld.buildingsData[15];
+var bldBioLab = gamePage.bld.buildingsData[9];
+var bldOilWell = gamePage.bld.buildingsData[20];
+var bldFactory = gamePage.bld.buildingsData[22];
+var bldCalciner = gamePage.bld.buildingsData[16];
+var bldAccelerator = gamePage.bld.buildingsData[24];
+
+ // These are the assorted variables
+var proVar = gamePage.resPool.energyProd;
+var conVar = gamePage.resPool.energyCons;
 var tickDownCounter = 1;
 var deadScript = "Script is dead";
 var furDerVal = 3;
-var arr = [];
+var autoChoice = "farmer";
 var resList = [];
+
 
 var buildings = [
 		["Hut", false], 
@@ -107,6 +120,17 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoBuild" style="color:red" onclick="autoSwitch(autoCheck[0], 0, autoName[0], \'autoBuild\');"> Auto Build </button></br>' + 
 '<button id="bldSelect" onclick="selectBuildings()">Select Building</button></br>' +
 
+'<button id="autoAssign" style="color:red" onclick="autoSwitch(autoCheck[8], 8, autoName[8], \'autoAssign\')"> Auto Assign </button>' +
+'<select id="autoAssignChoice" size="1" onclick="setAutoAssignValue()">' +
+'<option value="farmer" selected="selected">Farmer</option>' +
+'<option value="woodcutter">Woodcutter</option>' +
+'<option value="scholar">Scholar</option>' +
+'<option value="priest">Priest</option>' +
+'<option value="miner">Miner</option>' +
+'<option value="hunter">Hunter</option>' +
+'<option value="engineer">Engineer</option>' +
+'</select></br>' +
+
 '<button id="autoCraft" style="color:red" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
 '<select id="craftFur" size="1" onclick="setFurValue()">' +
 '<option value="1" selected="selected">Parchment</option>' +
@@ -120,6 +144,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoPraise" style="color:red" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br>' +
+'<button id="autoEnergy" style="color:red" onclick="autoSwitch(autoCheck[9], 9, autoName[9], \'autoEnergy\')"> Energy Control </button></br>' +
 '<button id="autoParty" style="color:red" onclick="autoSwitch(autoCheck[7], 7, autoName[7], \'autoParty\')"> Auto Party </button></br></br>' + 
 '</div>' +
 '</div>'
@@ -207,6 +232,10 @@ function setFurValue() {
 	furDerVal = $('#craftFur').val();
 }
 
+function setAutoAssignValue() {
+	autoChoice = $('#autoAssignChoice').val();
+}
+
 function autoSwitch(varCheck, varNumber, textChange, varName) {
 	if (varCheck == "false") {
 		autoCheck[varNumber] = "true";
@@ -230,6 +259,9 @@ function clearScript() {
 	$("#autoScience").remove();
 	$("#autoUpgrade").remove();
 	$("#autoParty").remove();
+	$("#autoAssign").remove();
+	$("#autoEnergy").remove();
+	$("#autoAssignChoice").remove();
 	$("#farRightColumn").remove();
 	$("#craftFur").remove();
 	$("#buildingSelect").remove();
@@ -418,24 +450,52 @@ function autoParty() {
 	}
 }
 
+		// Auto assign new kittens to selected job
+function autoAssign() {
+	if (autoCheck[8] != "false") {
+		gamePage.village.assignJob(gamePage.village.getJob(autoChoice));
+	}
+}
+
+		// Control Energy Consumption
+function energyControl() {
+	if (autoCheck[9] != "false") {
+		if (proVar > (conVar + 1)) {
+			for (; bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 1); bldAccelerator.on++) {};
+			for (; bldCalciner.val > bldCalciner.on && proVar > (conVar + 1); bldCalciner.on++) {};
+			for (; bldFactory.val > bldFactory.on && proVar > (conVar + 1); bldFactory.on++) {};
+			for (; bldOilWell.val > bldOilWell.on && proVar > (conVar + 1); bldOilWell.on++) {};
+			for (; bldBioLab.val > bldBioLab.on && proVar > (conVar + 1); bldBioLab.on++) {};
+		} else if (proVar < conVar) {
+			for (; bldBioLab.on > 0 && proVar < conVar; bldBioLab.on--) {};
+			for (; bldOilWell.on > 0 && proVar < conVar; bldOilWell.on--) {};
+			for (; bldFactory.on > 0 && proVar < conVar; bldFactory.on--) {};
+			for (; bldCalciner.on > 0 && proVar < conVar; bldCalciner.on--) {};
+			for (; bldAccelerator.on > 0 && proVar < conVar; bldAccelerator.on--) {};
+		} else {
+		}
+	}
+}
+
 		// This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
 	autoPraise();
+	energyControl();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
 		autoCraft();
 		autoHunt();
-		autoBuild();
-		autoResearch();
-		autoWorkshop();
+		autoAssign();
 		
 	}
 	
-	if (gamePage.timer.ticksTotal % 150 === 0) {
-		
+	if (gamePage.timer.ticksTotal % 25 === 0) {
+		autoBuild();
+		autoResearch();
+		autoWorkshop();
 		autoParty();
 		autoTrade();		
 		
