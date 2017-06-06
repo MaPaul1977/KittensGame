@@ -17,6 +17,7 @@ Currently this script will automatically do the following:
 6) Research Science
 7) Upgrade Workshop
 8) Festival
+9) Energy Control
 
 In addition, it does 2-4 only once the corresponding resources are maxed. This allows you to come back to the game whenever you like and still be able to use your resources.
 
