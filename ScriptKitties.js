@@ -489,11 +489,12 @@ var runAllAutomation = setInterval(function() {
 		autoCraft();
 		autoHunt();
 		autoAssign();
+		autoBuild();
 		
 	}
 	
 	if (gamePage.timer.ticksTotal % 25 === 0) {
-		autoBuild();
+		
 		autoResearch();
 		autoWorkshop();
 		autoParty();
