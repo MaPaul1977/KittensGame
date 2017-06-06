@@ -121,7 +121,6 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br>' +
 '<button id="autoParty" style="color:red" onclick="autoSwitch(autoCheck[7], 7, autoName[7], \'autoParty\')"> Auto Party </button></br></br>' + 
-'</ br><text id="tickDownTime"></text>' +
 '</div>' +
 '</div>'
 
@@ -223,7 +222,6 @@ function autoSwitch(varCheck, varNumber, textChange, varName) {
 function clearScript() {
 	$("#killSwitch").remove();
 	$("#efficiencyButton").remove();
-	$("#tickDownTime").remove();
 	$("#autoBuild").remove();
 	$("#autoCraft").remove();
 	$("#autoHunt").remove();
@@ -275,19 +273,10 @@ function autoPraise(){
 	}
 }
 
-	// Display time left till next series of building/hunting/crafting
-function tickTimer() {
-
-	a = Math.abs(150 - (gamePage.timer.ticksTotal - tickDownCounter));
-	$('#tickDownTime').html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There are ' + a + ' ticks left till the script executes again.');
-	
-}
-
-		// Check to see if we have the resources to make the building
-function hasRes(strangeVarNumberWhat){
+		// Check to see if we have the required resources
+function haveRes(pAr){
 	
 	var booTest = true;
-	var pAr = gamePage.bld.getPrices(strangeVarNumberWhat);
 	for (i = 0; i < pAr.length; i++) {
 		var resName = pAr[i].name;
 		if (pAr[i].val < gamePage.resPool.get(resName).value && booTest != false) {
@@ -299,14 +288,15 @@ function hasRes(strangeVarNumberWhat){
 	return booTest;
 	
 }
-				
+
 		// Build buildings automatically
 function autoBuild() {		
 if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	
 	for (var i = 0; i < buildings.length; i++) {
-		if (buildings[i][1] != false && hasRes(buildingsList[i]) !=false) {
+		if (buildings[i][1] != false && haveRes(gamePage.bld.getPrices(buildingsList[i])) !=false) {
 				$(".btnContent:contains('" + (buildings[i][0]) + "')").trigger("click");
+				console.log("You just built " + buildings[i][0]);
 			}
 	}
 	
@@ -370,8 +360,8 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 }	
 }
 
-function autoResearch() {	
 		// Auto Research
+function autoResearch() {	
 if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var origTab = gamePage.ui.activeTabId;
       
@@ -380,7 +370,7 @@ if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var techs = gamePage.science.techs;
 
 	 for (var i = 0; i < techs.length; i++) {
-		if (techs[i].unlocked && techs[i].researched != true) {
+		if (techs[i].unlocked && techs[i].researched != true && haveRes(gamePage.science.techs[i].prices) != false) {
 			$(".btnContent:contains('" + techs[i].label + "')").click();
 
 			}
@@ -402,7 +392,7 @@ var origTab = gamePage.ui.activeTabId;
 	var upgrades = gamePage.workshop.upgrades;
 	  
 	 for (var i = 0; i < upgrades.length; i++) {
-		if (upgrades[i].unlocked && upgrades[i].researched != true) {
+		if (upgrades[i].unlocked && upgrades[i].researched != true && haveRes(gamePage.workshop.upgrades[i].prices) != false) {
 			$(".btnContent:contains('" + upgrades[i].label + "')").click();
 			}
 		}
@@ -433,22 +423,22 @@ clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
 	autoPraise();
-	tickTimer();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
 		autoCraft();
 		autoHunt();
+		autoBuild();
+		autoResearch();
+		autoWorkshop();
+		
 	}
 	
 	if (gamePage.timer.ticksTotal % 150 === 0) {
 		
-		tickDownCounter = gamePage.timer.ticksTotal;
 		autoParty();
 		autoTrade();		
-		autoResearch();
-		autoWorkshop();
-		autoBuild();
+		
 	}
 
 }, 200);
