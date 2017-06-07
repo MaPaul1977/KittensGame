@@ -1,5 +1,5 @@
 # ScriptKitties
-A script to automate play of the addicting <a href="http://bloodrizer.ru/games/kittens/#">Kittens Game</a>
+A script to automate playing the addicting <a href="http://bloodrizer.ru/games/kittens/#">Kittens Game</a>
 
 ## How do I use the script?
 
@@ -51,6 +51,6 @@ You can use this script as much or as little as you like, but if you turn on all
 
 Enjoy!
 
-##Special Thanks!
+## Any special thanks?
 
-Special thanks to the authors of both AutoKittens and KittenScientists for some of the ideas I integrated into this script.
+A huge thanks to the authors of both AutoKittens and KittenScientists for some of the ideas I integrated into this script!
