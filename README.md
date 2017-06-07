@@ -1,5 +1,5 @@
 # ScriptKitties
-Kittens Game Scripts
+A script to automate play of the addicting <a href="http://bloodrizer.ru/games/kittens/#">Kittens Game</a>
 
 ## How do I use the script?
 
