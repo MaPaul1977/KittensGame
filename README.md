@@ -9,7 +9,6 @@ If you want to use this, feel free to bookmark:
 
 or just paste it directly into the console. Once loaded, the button to get to the ScriptKitties option menu is in the bottom right "footer" links.
 
-You can also quickload ScriptKitties by saving the above link as a bookmark.
 
 ## What does it do?
 
