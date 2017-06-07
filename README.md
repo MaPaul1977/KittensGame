@@ -25,7 +25,6 @@ Currently this script will automatically do the following:
 8) Festival
 9) Energy Control
 
-<p align="center"><img src="https://s-media-cache-ak0.pinimg.com/originals/cb/5e/af/cb5eafb205bc2a1914fe240e5d441cf9.jpg" /></p>
 
 ## What are some interesting details?
 
