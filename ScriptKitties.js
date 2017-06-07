@@ -103,7 +103,8 @@ var resources = [
 var secondaryResources = [
 			["beam", "scaffold", 50],
 			["steel", "gear", 15],
-			["ship", "starchart", 25],
+			["concrete", "slab", 5000],
+			["steel", "alloy", 75],
 			["slab", "concrete", 2500]
 			]
 
@@ -111,7 +112,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<a id="scriptOptions" onclick="selectOptions()"> | ScriptKitties </a>' + 
 
-'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-600px;" class="dialog help">' + 
+'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-600px; width:200px" class="dialog help">' + 
 '<a href="#" onclick="clearOptionHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
 
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
@@ -150,7 +151,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 $("#footerLinks").append(htmlMenuAddition);
 
-var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-400px" class="dialog help">' + 
+var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-400px; width:200px" class="dialog help">' + 
 '<a href="#" onclick="clearHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
 
 '	<br><input type="checkbox" id="hutChecker"><label for="hutChecker" onclick="$(\'.hutCheck\').click();"><b>Kitten Housing</b></label><br>' + 
@@ -299,7 +300,7 @@ function autoObserve() {
 	
 	// Auto praise the sun
 function autoPraise(){
-	if (autoCheck[4] != "false" && gamePage.science.techs[16].unlocked) {
+	if (autoCheck[4] != "false" && gamePage.religion.getRU("solarRevolution").on) {
 			gamePage.religion.praise();
 	}
 }
@@ -327,7 +328,6 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	for (var i = 0; i < buildings.length; i++) {
 		if (buildings[i][1] != false && haveRes(gamePage.bld.getPrices(buildingsList[i])) !=false) {
 				$(".btnContent:contains('" + (buildings[i][0]) + "')").trigger("click");
-				console.log("You just built " + buildings[i][0]);
 			}
 	}
 	
@@ -360,8 +360,8 @@ if (autoCheck[2] != "false") {
 }	
 }
 
-function autoCraft() {
 		// Craft primary resources automatically
+function autoCraft() {
 if (autoCheck[1] != "false") {
 for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
@@ -377,6 +377,7 @@ for (var i = 0; i < secondaryResources.length; i++) {
 	var priRes = gamePage.resPool.get(secondaryResources[i][0]);
 	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
 	var resMath = priRes.value / secondaryResources[i][2];
+	
 	if (resMath > 1 && secRes.value < (priRes.value / 5) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
 		gamePage.craft(secondaryResources[i][1], (resMath / 3));
 	}
@@ -438,7 +439,7 @@ var origTab = gamePage.ui.activeTabId;
 
 		// Festival automatically
 function autoParty() {
-	if (autoCheck[7] != "false") {
+	if (autoCheck[7] != "false" && gamePage.calendar.festivalDays < 4000 && gamePage.prestige.getPerk("carnivals").researched) {
 		var catpower = gamePage.resPool.get('manpower').value;
 		var culture = gamePage.resPool.get('culture').value;
 		var parchment = gamePage.resPool.get('parchment').value;
@@ -452,7 +453,7 @@ function autoParty() {
 
 		// Auto assign new kittens to selected job
 function autoAssign() {
-	if (autoCheck[8] != "false") {
+	if (autoCheck[8] != "false" && gamePage.village.getJob(autoChoice).unlocked) {
 		gamePage.village.assignJob(gamePage.village.getJob(autoChoice));
 	}
 }
@@ -497,10 +498,19 @@ function energyControl() {
 	}
 }
 
+function autoNip() {
+	if (autoCheck[0] != "false") {
+		if (gamePage.bld.buildingsData[0].val < 100) {
+			$(".btnContent:contains('Gather')").trigger("click");
+		}
+	}
+}
+
 		// This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
+	autoNip();
 	autoPraise();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
