@@ -21,7 +21,7 @@ Currently this script will automatically do the following:
 
 BUILD: ScriptKitties will automatically build any of the buildings on the Bonfire tab, and it lets you choose exactly which ones you want! If you want to turn on or off an entire group of buildings, just click the header.
 
-CRAFT: ScriptKittes keeps your resources from capping out! You can be sure to keep a healthy supply of crafted resources coming!
+CRAFT: ScriptKitties keeps your resources from capping out! You can be sure to keep a healthy supply of crafted resources coming!
 
 HUNT: Don't let your catpower go to waste! Automatically send your kittens on hunting expeditions to get your furs, ivory, and unicorns!
 
