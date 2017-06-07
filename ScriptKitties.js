@@ -11,8 +11,8 @@ var bldCalciner = gamePage.bld.buildingsData[16];
 var bldAccelerator = gamePage.bld.buildingsData[24];
 
  // These are the assorted variables
-var proVar = gamePage.resPool.energyProd;
-var conVar = gamePage.resPool.energyCons;
+var proVar = gamePage.resPool.energyProd; 
+var conVar = gamePage.resPool.energyCons;	
 var tickDownCounter = 1;
 var deadScript = "Script is dead";
 var furDerVal = 3;
@@ -460,20 +460,40 @@ function autoAssign() {
 		// Control Energy Consumption
 function energyControl() {
 	if (autoCheck[9] != "false") {
-		if (proVar > (conVar + 1)) {
-			for (; bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 1); bldAccelerator.on++) {};
-			for (; bldCalciner.val > bldCalciner.on && proVar > (conVar + 1); bldCalciner.on++) {};
-			for (; bldFactory.val > bldFactory.on && proVar > (conVar + 1); bldFactory.on++) {};
-			for (; bldOilWell.val > bldOilWell.on && proVar > (conVar + 1); bldOilWell.on++) {};
-			for (; bldBioLab.val > bldBioLab.on && proVar > (conVar + 1); bldBioLab.on++) {};
-		} else if (proVar < conVar) {
-			for (; bldBioLab.on > 0 && proVar < conVar; bldBioLab.on--) {};
-			for (; bldOilWell.on > 0 && proVar < conVar; bldOilWell.on--) {};
-			for (; bldFactory.on > 0 && proVar < conVar; bldFactory.on--) {};
-			for (; bldCalciner.on > 0 && proVar < conVar; bldCalciner.on--) {};
-			for (; bldAccelerator.on > 0 && proVar < conVar; bldAccelerator.on--) {};
-		} else {
-		}
+		proVar = gamePage.resPool.energyProd; 
+		conVar = gamePage.resPool.energyCons;		
+		
+			if (bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 3)) {
+				bldAccelerator.on++;
+				conVar++;
+			} else if (bldCalciner.val > bldCalciner.on && proVar > (conVar + 3)) {
+				bldCalciner.on++;
+				conVar++;
+			} else if (bldFactory.val > bldFactory.on && proVar > (conVar + 3)) {
+				bldFactory.on++;
+				conVar++;
+			} else if (bldOilWell.val > bldOilWell.on && proVar > (conVar + 3)) {
+				bldOilWell.on++;
+				conVar++;
+			} else if (bldBioLab.val > bldBioLab.on && proVar > (conVar + 3)) {
+				bldBioLab.on++;
+				conVar++;
+			} else if (bldBioLab.on > 0 && proVar < conVar) {
+				bldBioLab.on--;
+				conVar--;
+			} else if (bldOilWell.on > 0 && proVar < conVar) {
+				bldOilWell.on--;
+				conVar--;
+			} else if (bldFactory.on > 0 && proVar < conVar) {
+				bldFactory.on--;
+				conVar--;
+			} else if (bldCalciner.on > 0 && proVar < conVar) {
+				bldCalciner.on--;
+				conVar--;
+			} else if (bldAccelerator.on > 0 && proVar < conVar) {
+				bldAccelerator.on--;
+				conVar--;
+			}		
 	}
 }
 
@@ -482,7 +502,6 @@ clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
 	autoPraise();
-	energyControl();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
@@ -490,6 +509,7 @@ var runAllAutomation = setInterval(function() {
 		autoHunt();
 		autoAssign();
 		autoBuild();
+		energyControl();
 		
 	}
 	
