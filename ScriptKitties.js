@@ -104,7 +104,6 @@ var secondaryResources = [
 			["beam", "scaffold", 50],
 			["steel", "gear", 15],
 			["ship", "starchart", 25],
-			["beam", "megalith", 25],
 			["slab", "concrete", 2500]
 			]
 
@@ -306,12 +305,12 @@ function autoPraise(){
 }
 
 		// Check to see if we have the required resources
-function haveRes(pAr){
+function haveRes(model){
 	
 	var booTest = true;
-	for (i = 0; i < pAr.length; i++) {
-		var resName = pAr[i].name;
-		if (pAr[i].val < gamePage.resPool.get(resName).value && booTest != false) {
+	for (i = 0; i < model.length; i++) {
+		var resName = model[i].name;
+		if (model[i].val < gamePage.resPool.get(resName).value && booTest != false) {
 			
 		} else {
 			booTest = false;
@@ -379,9 +378,10 @@ for (var i = 0; i < secondaryResources.length; i++) {
 	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
 	var resMath = priRes.value / secondaryResources[i][2];
 	if (resMath > 1 && secRes.value < (priRes.value / 5) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
-		gamePage.craft(secondaryResources[i][1], (priRes.value / 5));
+		gamePage.craft(secondaryResources[i][1], (resMath / 3));
 	}
 }	
+
 		//Craft the fur derivatives
 var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 	for (var i = 0; i < furDerVal; i++) {
