@@ -52,3 +52,12 @@ Enjoy!
 ## Any special thanks?
 
 A huge thanks to the authors of both AutoKittens and KittenScientists for some of the ideas I integrated into this script!
+
+Thanks also go out to each of these reddit users for their help!
+
+u/Patashu
+u/Saucistophe
+u/Trezzie
+u/DamianDavis
+u/curiouscorncob
+u/hughperman
