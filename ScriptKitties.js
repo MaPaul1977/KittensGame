@@ -1,4 +1,4 @@
-// These control the button statuses
+ // These control the button statuses
 var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy'];
 
@@ -18,6 +18,7 @@ var deadScript = "Script is dead";
 var furDerVal = 3;
 var autoChoice = "farmer";
 var resList = [];
+var secResRatio = 30;
 
 
 var buildings = [
@@ -135,7 +136,11 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<option value="2">Manuscript</option>' +
 '<option value="3">Compendium</option>' +
 '<option value="4">Blueprint</option>' +
-'</select></br>' +
+'</select></br></br>' +
+
+'<label id="secResLabel"> Secondary Craft % </label>' + 
+'<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="30"></span></br></br>' + 
+
 
 '<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
 '<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
@@ -251,6 +256,9 @@ function clearScript() {
 	$("#efficiencyButton").remove();
 	$("#autoBuild").remove();
 	$("#autoCraft").remove();
+	$("#secResRatio").remove();
+	$("#secResText").remove();
+	$("#secResSpan").remove();
 	$("#autoHunt").remove();
 	$("#autoTrade").remove();
 	$("#autoPraise").remove();
@@ -298,7 +306,7 @@ function autoObserve() {
 	
 	// Auto praise the sun
 function autoPraise(){
-	if (autoCheck[4] != "false" && gamePage.religion.getRU("solarRevolution").on) {
+	if (autoCheck[4] != "false" && gamePage.bld.getBuildingExt('temple').meta.val > 0) {
 			gamePage.religion.praise();
 	}
 }
@@ -373,14 +381,14 @@ for (var i = 0; i < resources.length; i++) {
 		}
 	}
 	
-		// Craft secondary resources automatically
+		// Craft secondary resources automatically if primary craftable is > secondary craftable
 for (var i = 0; i < secondaryResources.length; i++) {
 	var priRes = gamePage.resPool.get(secondaryResources[i][0]);
 	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
-	var resMath = priRes.value / secondaryResources[i][2];
+	var resMath = priRes.value / secondaryResources[i][2];	
 	
-	if (resMath > 1 && secRes.value < (priRes.value / 5) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
-		gamePage.craft(secondaryResources[i][1], (resMath / 3));
+	if (resMath > 1 && secRes.value < priRes.value && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
+		gamePage.craft(secondaryResources[i][1], (resMath * (secResRatio / 100)));
 	}
 }	
 
@@ -440,13 +448,17 @@ var origTab = gamePage.ui.activeTabId;
 
 		// Festival automatically
 function autoParty() {
-	if (autoCheck[7] != "false" && gamePage.calendar.festivalDays < 4000 && gamePage.prestige.getPerk("carnivals").researched) {
+	if (autoCheck[7] != "false" && gamePage.science.get("drama").researched) {
 		var catpower = gamePage.resPool.get('manpower').value;
 		var culture = gamePage.resPool.get('culture').value;
 		var parchment = gamePage.resPool.get('parchment').value;
-	
+		
 		if (catpower > 1500 && culture > 5000 && parchment > 2500) {
-			gamePage.village.holdFestival(1);
+			if (gamePage.prestige.getPerk("carnivals").researched)
+				gamePage.village.holdFestival(1);
+			else if (gamePage.calendar.festivalDays = 0) {
+				gamePage.village.holdFestival(1);
+			}
 		}
 	
 	}
@@ -534,3 +546,4 @@ var runAllAutomation = setInterval(function() {
 	}
 
 }, 200);
+
