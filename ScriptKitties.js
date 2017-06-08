@@ -440,13 +440,17 @@ var origTab = gamePage.ui.activeTabId;
 
 		// Festival automatically
 function autoParty() {
-	if (autoCheck[7] != "false" && gamePage.calendar.festivalDays < 4000 && gamePage.prestige.getPerk("carnivals").researched) {
+	if (autoCheck[7] != "false" && gamePage.science.get("drama").researched) {
 		var catpower = gamePage.resPool.get('manpower').value;
 		var culture = gamePage.resPool.get('culture').value;
 		var parchment = gamePage.resPool.get('parchment').value;
-	
+		
 		if (catpower > 1500 && culture > 5000 && parchment > 2500) {
-			gamePage.village.holdFestival(1);
+			if (gamePage.calendar.festivalDays < 4000 && gamePage.prestige.getPerk("carnivals").researched)
+				gamePage.village.holdFestival(1);
+			else if (gamePage.calendar.festivalDays = 0) {
+				gamePage.village.holdFestival(1);
+			}
 		}
 	
 	}
