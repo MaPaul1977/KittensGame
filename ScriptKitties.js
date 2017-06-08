@@ -95,15 +95,14 @@ var resources = [
             ["coal", "steel", 100],
         	["iron", "plate", 125],
             ["oil", "kerosene", 7500],
-            ["titanium", "alloy", 75],
             ["uranium", "thorium", 250],
 			["unobtainium", "eludium", 1000]
                 ];
 				
 var secondaryResources = [
 			["beam", "scaffold", 50],
+            ["steel", "alloy", 75],
 			["steel", "gear", 15],
-			["concrete", "slab", 5000],
 			["slab", "concrete", 2500]
 			]
 
@@ -111,7 +110,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<a id="scriptOptions" onclick="selectOptions()"> | ScriptKitties </a>' + 
 
-'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-400px; width:200px" class="dialog help">' + 
+'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-100px; width:200px" class="dialog help">' + 
 '<a href="#" onclick="clearOptionHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
 
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
