@@ -104,7 +104,6 @@ var secondaryResources = [
 			["beam", "scaffold", 50],
 			["steel", "gear", 15],
 			["concrete", "slab", 5000],
-			["steel", "alloy", 75],
 			["slab", "concrete", 2500]
 			]
 
@@ -112,7 +111,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<a id="scriptOptions" onclick="selectOptions()"> | ScriptKitties </a>' + 
 
-'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-600px; width:200px" class="dialog help">' + 
+'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-400px; width:200px" class="dialog help">' + 
 '<a href="#" onclick="clearOptionHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
 
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
@@ -338,7 +337,7 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 function autoTrade() {
 	if (autoCheck[3] != "false") {
 		var titRes = gamePage.resPool.get('titanium');
-		var unoRes = gamePool.resPool.get('unobtainium');
+		var unoRes = gamePage.resPool.get('unobtainium');
 		var goldResource = gamePage.resPool.get('gold');
 		var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 			if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
