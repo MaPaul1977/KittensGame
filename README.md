@@ -33,7 +33,7 @@ Currently this script will automatically do the following:
 
 <b>HUNT:</b> Don't let your catpower go to waste! Automatically send your kittens on hunting expeditions to get your furs, ivory, and unicorns!
 
-<b>TRADE:</b> Titanium is no longer a problem. Once you have unlocked trade with Zebras, ScriptKitties will make sure to trade frequently with them!
+<b>TRADE:</b> Automagically trade with Zebras and the Elders! Keep your titanium stores full and never miss a visit from the Elders!
 
 <b>PRAISE:</b> Want a praise bonus that will make a difference? Turn on Auto Praise and see your faith based productivity skyrocket by praising the sun every tick!
 
