@@ -18,6 +18,7 @@ var deadScript = "Script is dead";
 var furDerVal = 3;
 var autoChoice = "farmer";
 var resList = [];
+var secResRatio = 30;
 
 
 var buildings = [
@@ -135,7 +136,11 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<option value="2">Manuscript</option>' +
 '<option value="3">Compendium</option>' +
 '<option value="4">Blueprint</option>' +
-'</select></br>' +
+'</select></br></br>' +
+
+'<label id="secResLabel"> Secondary Craft % </label>' + 
+'<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="30"></span></br></br>' + 
+
 
 '<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
 '<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
@@ -251,6 +256,9 @@ function clearScript() {
 	$("#efficiencyButton").remove();
 	$("#autoBuild").remove();
 	$("#autoCraft").remove();
+	$("#secResRatio").remove();
+	$("#secResText").remove();
+	$("#secResSpan").remove();
 	$("#autoHunt").remove();
 	$("#autoTrade").remove();
 	$("#autoPraise").remove();
@@ -377,10 +385,10 @@ for (var i = 0; i < resources.length; i++) {
 for (var i = 0; i < secondaryResources.length; i++) {
 	var priRes = gamePage.resPool.get(secondaryResources[i][0]);
 	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
-	var resMath = priRes.value / secondaryResources[i][2];
+	var resMath = priRes.value / secondaryResources[i][2];	
 	
 	if (resMath > 1 && secRes.value < (priRes.value / 5) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
-		gamePage.craft(secondaryResources[i][1], (resMath / 3));
+		gamePage.craft(secondaryResources[i][1], (resMath * (secResRatio / 100)));
 	}
 }	
 
