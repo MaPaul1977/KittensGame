@@ -338,10 +338,13 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 function autoTrade() {
 	if (autoCheck[3] != "false") {
 		var titRes = gamePage.resPool.get('titanium');
+		var unoRes = gamePool.resPool.get('unobtainium');
 		var goldResource = gamePage.resPool.get('gold');
 		var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 			if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
-				if (titRes.value < (titRes.maxValue * 0.9)  && gamePage.diplomacy.get('zebras').unlocked) {
+				if (unoRes.value > 5000  && gamePage.diplomacy.get('leviathans').unlocked) {
+					gamePage.diplomacy.tradeAll(game.diplomacy.get("leviathans"));
+				} else if (titRes.value < (titRes.maxValue * 0.9)  && gamePage.diplomacy.get('zebras').unlocked) {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
 				} else if (gamePage.diplomacy.get('dragons').unlocked) {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("dragons"), (goldOneTwenty / 15));
