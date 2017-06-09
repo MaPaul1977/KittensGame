@@ -52,7 +52,8 @@ var buildings = [
 		["Chapel", false], 
 		["Temple", false], 
 		["Mint", false],
-		["Ziggurat", false]
+		["Ziggurat", false],
+		["unicornPasture", false]
 		];	
 		
 var buildingsList = [
@@ -86,7 +87,8 @@ var buildingsList = [
 		["chapel"], 
 		["temple"], 
 		["mint"], 
-		["ziggurat"]
+		["ziggurat"],
+		["unicornPasture"]
 		];	
 		
 var resources = [
@@ -200,7 +202,8 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 '	<input type="checkbox" id="chapelBld" class="otherCheck" onchange="verifyBuildingSelected(\'27\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
 '	<input type="checkbox" id="templeBld" class="otherCheck" onchange="verifyBuildingSelected(\'28\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
 '	<input type="checkbox" id="mintBld" class="otherCheck" onchange="verifyBuildingSelected(\'29\', \'mintBld\')"><label for="mintBld">Mint</label><br>' + 
-'	<input type="checkbox" id="zigguratBld" class="otherCheck" onchange="verifyBuildingSelected(\'30\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br></br>' + 
+'	<input type="checkbox" id="zigguratBld" class="otherCheck" onchange="verifyBuildingSelected(\'30\', \'zigguratBld\')"><label for="zigguratBld">Ziggurat</label><br>' + 
+'	<input type="checkbox" id="unicBld" class="otherCheck" onchange="verifyBuildingSelected(\'31\', \'unicBld\')"><label for="unicBld">Unicorn Pasture</label><br></br>' + 
 
 '</div>'
 
