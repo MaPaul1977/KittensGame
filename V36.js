@@ -18,7 +18,7 @@ var deadScript = "Script is dead";
 var furDerVal = 3;
 var autoChoice = "farmer";
 var resList = [];
-var secResRatio = 30;
+var secResRatio = 0;
 
 
 var buildings = [
@@ -69,7 +69,7 @@ var buildings = [
 		["Cryostation", false, 5],
 		["Space Beacon", false, 6],
 		["Terraforming Station", false, 7],
-		["Hydroponics", false, 8],
+		["Hydroponics", false, 7],
 		["Tectonic", false, 8]
 		];	
 		
@@ -256,7 +256,7 @@ var spaceSelectAddition = '<div id="spaceSelect" style="display:none; margin-top
 
 '	<input type="checkbox" id="moonChecker"><label for="moonChecker" onclick="$(\'.moonCheck\').click();"><b>Moon</b></label></br>' + 
 
-'	<input type="checkbox" id="outSBld" class="moonCheck" onchange="verifyBuildingSelected(\'35\', \'outSBld\');"><label for="outSBld">Moon Outpost</label></br>' + 
+'	<input type="checkbox" id="outSBld" class="moonCheck" onchange="verifyBuildingSelected(\'35\', \'outSBld\');"><label for="outSBld">Lunar Outpost</label></br>' + 
 '	<input type="checkbox" id="baseSBld" class="moonCheck" onchange="verifyBuildingSelected(\'36\', \'baseSBld\');"><label for="baseSBld">Moon Base</label></br></br>' + 
 
 '	<input type="checkbox" id="duneChecker"><label for="duneChecker" onclick="$(\'.duneCheck\').click();"><b>Dune</b></label></br>' + 
@@ -286,11 +286,11 @@ var spaceSelectAddition = '<div id="spaceSelect" style="display:none; margin-top
 
 '	<input type="checkbox" id="yarnChecker"><label for="yarnChecker" onclick="$(\'.yarnCheck\').click();"><b>Yarn</b></label></br>' + 
 
-'	<input type="checkbox" id="terrSBld" class="yarnCheck" onchange="verifyBuildingSelected(\'46\', \'terrSBld\');"><label for="terrSBld">Terraforming Station</label></br></br>' + 
+'	<input type="checkbox" id="terrSBld" class="yarnCheck" onchange="verifyBuildingSelected(\'46\', \'terrSBld\');"><label for="terrSBld">Terraforming Station</label></br>' + 
+'	<input type="checkbox" id="hydrSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'47\', \'hydrSBld\');"><label for="hydrSBld">Hydroponics</label></br></br>' + 
 
 '	<input type="checkbox" id="centaurusChecker"><label for="centaurusChecker" onclick="$(\'.centaurusCheck\').click();"><b>Centaurus System</b></label></br>' + 
 
-'	<input type="checkbox" id="hydrSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'47\', \'hydrSBld\');"><label for="hydrSBld">Hydroponics</label></br>' + 
 '	<input type="checkbox" id="tecSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'48\', \'tecSBld\');"><label for="tecSBld">Tectonic</label></br></br>' + 
 
 '</div>'
@@ -416,11 +416,7 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 		// Build space stuff automatically
 function autoSpace() {		
 if (autoCheck[0] != "false") {	
-	
-	var origTab = gamePage.ui.activeTabId;
-	gamePage.ui.activeTabId = 'Space'; gamePage.render();
-	
-	
+		
 		// Build space buildings
 	for (var z = 32; z < buildings.length; z++) {
 		if (buildings[z][1] != false) {		
@@ -457,10 +453,6 @@ if (autoCheck[0] != "false") {
 			}
 		}
 	}
-	
-	if (origTab != gamePage.ui.activeTabId) {
-        gamePage.ui.activeTabId = origTab; gamePage.render();
-      }
 	
 }
 }			
