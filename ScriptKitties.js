@@ -18,7 +18,8 @@ var deadScript = "Script is dead";
 var furDerVal = 3;
 var autoChoice = "farmer";
 var resList = [];
-var secResRatio = 30;
+var secResRatio = 0;
+var steamOn = 0;
 
 
 var buildings = [
@@ -53,7 +54,24 @@ var buildings = [
 		["Temple", false], 
 		["Mint", false],
 		["Ziggurat", false],
-		["unicornPasture", false]
+		["Unicorn Pasture", false],
+		["Space Elevator", false, 0],
+		["Satellite", false, 0],
+		["Space Station", false, 0],
+		["Moon Outpost", false, 1],
+		["Moon Base", false, 1],
+		["Planet Cracker", false, 2],
+		["Hydro Fracturer", false, 2],
+		["Spice Refinery", false, 2],
+		["Research Vessel", false, 3],
+		["Orbital Array", false, 3],
+		["Sunlifter", false, 4],
+		["Containment Chamber", false, 4],
+		["Cryostation", false, 5],
+		["Space Beacon", false, 6],
+		["Terraforming Station", false, 7],
+		["Hydroponics", false, 7],
+		["Tectonic", false, 8]
 		];	
 		
 var buildingsList = [
@@ -88,7 +106,24 @@ var buildingsList = [
 		["temple"], 
 		["mint"], 
 		["ziggurat"],
-		["unicornPasture"]
+		["unicornPasture"],
+		["spaceElevator"],
+		["sattelite"],
+		["spaceStation"],
+		["moonOutpost"],
+		["moonBase"],
+		["planetCracker"],
+		["hydrofracturer"],
+		["spiceRefinery"],
+		["researchVessel"],
+		["orbitalArray"],
+		["sunlifter"],
+		["containmentChamber"],
+		["cryostation"],
+		["spaceBeacon"],
+		["terraformingStation"],
+		["hydroponics"],
+		["tectonic"]
 		];	
 		
 var resources = [
@@ -106,7 +141,7 @@ var secondaryResources = [
 			["beam", "scaffold", 50],
             ["steel", "alloy", 75],
 			["steel", "gear", 15],
-			["slab", "concrete", 2500]
+			["slab", "concrate", 2500]
 			]
 
 var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
@@ -157,7 +192,8 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 $("#footerLinks").append(htmlMenuAddition);
 
 var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-400px; width:200px" class="dialog help">' + 
-'<a href="#" onclick="clearHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
+'<a href="#" onclick="$(\'#spaceSelect\').toggle(); $(\'#buildingSelect\').hide();" style="position: absolute; top: 10px; left: 15px;">space</a>' + 
+'<a href="#" onclick="$(\'#buildingSelect\').hide();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
 
 '	<br><input type="checkbox" id="hutChecker"><label for="hutChecker" onclick="$(\'.hutCheck\').click();"><b>Kitten Housing</b></label><br>' + 
 '	<input type="checkbox" id="hutBld" class="hutCheck" onchange="verifyBuildingSelected(\'0\', \'hutBld\');"><label for="hutBld">Hut</label><br>' + 
@@ -170,10 +206,10 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 
 '	<input type="checkbox" id="prodChecker"><label for="prodChecker" onclick="$(\'.prodCheck\').click();"><b>Production</b></label><br>' + 
 '	<input type="checkbox" id="fieldBld" class="prodCheck" onchange="verifyBuildingSelected(\'5\', \'fieldBld\')"><label for="fieldBld">Catnip Field</label><br>' + 
-'	<input type="checkbox" id="pastureBld" class="prodCheck" onchange="verifyBuildingSelected(\'6\', \'pastureBld\')"><label for="pastureBld">Pasture</label><br>' + 
+'	<input type="checkbox" id="pastureBld" class="prodCheck" onchange="verifyBuildingSelected(\'6\', \'pastureBld\')"><label for="pastureBld">Pasture/Solar</label><br>' + 
 '	<input type="checkbox" id="mineBld" class="prodCheck" onchange="verifyBuildingSelected(\'7\', \'mineBld\')"><label for="mineBld">Mine</label><br>' + 
 '	<input type="checkbox" id="lumberBld" class="prodCheck" onchange="verifyBuildingSelected(\'8\', \'lumberBld\')"><label for="lumberBld">Lumber Mill</label><br>' + 
-'	<input type="checkbox" id="aqueductBld" class="prodCheck" onchange="verifyBuildingSelected(\'9\', \'aqueductBld\')"><label for="aqueductBld">Aqueduct</label><br>' + 
+'	<input type="checkbox" id="aqueductBld" class="prodCheck" onchange="verifyBuildingSelected(\'9\', \'aqueductBld\')"><label for="aqueductBld">Aqueduct/Hydro</label><br>' + 
 '	<input type="checkbox" id="oilBld" class="prodCheck" onchange="verifyBuildingSelected(\'10\', \'oilBld\')"><label for="oilBld">Oil Well</label><br>' + 
 '	<input type="checkbox" id="quarryBld" class="prodCheck" onchange="verifyBuildingSelected(\'11\', \'quarryBld\')"><label for="quarryBld">Quarry</label><br><br>' + 
 
@@ -197,7 +233,7 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 '	<input type="checkbox" id="warehouseBld" class="storageCheck" onchange="verifyBuildingSelected(\'24\', \'warehouseBld\')"><label for="warehouseBld">Warehouse</label><br><br>' + 
 
 '	<input type="checkbox" id="otherChecker"><label for="otherChecker" onclick="$(\'.otherCheck\').click();"><b>Other</b></label><br>' + 
-'	<input type="checkbox" id="ampBld" class="otherCheck" onchange="verifyBuildingSelected(\'25\', \'ampBld\')"><label for="ampBld">Amphitheatre</label><br>' + 
+'	<input type="checkbox" id="ampBld" class="otherCheck" onchange="verifyBuildingSelected(\'25\', \'ampBld\')"><label for="ampBld">Amphitheatre/Broadcast</label><br>' + 
 '	<input type="checkbox" id="tradeBld" class="otherCheck" onchange="verifyBuildingSelected(\'26\', \'tradeBld\')"><label for="tradeBld">Tradepost</label><br>' + 
 '	<input type="checkbox" id="chapelBld" class="otherCheck" onchange="verifyBuildingSelected(\'27\', \'chapelBld\')"><label for="chapelBld">Chapel</label><br>' + 
 '	<input type="checkbox" id="templeBld" class="otherCheck" onchange="verifyBuildingSelected(\'28\', \'templeBld\')"><label for="templeBld">Temple</label><br>' + 
@@ -207,9 +243,58 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 
 '</div>'
 
-$("#hutChecker").click(function() {
-        $(".hutCheck").prop("checked", !checkBoxes.prop("checked"));
-    });   
+var spaceSelectAddition = '<div id="spaceSelect" style="display:none; margin-top:-400px; width:200px" class="dialog help">' + 
+'<a href="#" onclick="$(\'#spaceSelect\').hide(); $(\'#buildingSelect\').toggle();" style="position: absolute; top: 10px; left: 15px;">cath</a>' + 
+'<a href="#" onclick="$(\'#spaceSelect\').hide();" style="position: absolute; top: 10px; right: 15px;">close</a>' + 
+
+'	</br></br><input type="checkbox" id="programs" class="programs" onchange="programBuild = this.checked; console.log(this.checked);"><label for="programs">Programs</label></br></br>' + 
+
+'	<input type="checkbox" id="spaceChecker"><label for="spaceChecker" onclick="$(\'.spaceCheck\').click();"><b>Space</b></label></br>' + 
+
+'	<input type="checkbox" id="elevSBld" class="spaceCheck" onchange="verifyBuildingSelected(\'32\', \'elevSBld\');"><label for="elevSBld">Space Elevator</label></br>' + 
+'	<input type="checkbox" id="satSBld" class="spaceCheck" onchange="verifyBuildingSelected(\'33\', \'satSBld\');"><label for="satSBld">Satellite</label></br>' + 
+'	<input type="checkbox" id="statSBld" class="spaceCheck" onchange="verifyBuildingSelected(\'34\', \'statSBld\');"><label for="statSBld">Space Station</label></br></br>' + 
+
+'	<input type="checkbox" id="moonChecker"><label for="moonChecker" onclick="$(\'.moonCheck\').click();"><b>Moon</b></label></br>' + 
+
+'	<input type="checkbox" id="outSBld" class="moonCheck" onchange="verifyBuildingSelected(\'35\', \'outSBld\');"><label for="outSBld">Lunar Outpost</label></br>' + 
+'	<input type="checkbox" id="baseSBld" class="moonCheck" onchange="verifyBuildingSelected(\'36\', \'baseSBld\');"><label for="baseSBld">Moon Base</label></br></br>' + 
+
+'	<input type="checkbox" id="duneChecker"><label for="duneChecker" onclick="$(\'.duneCheck\').click();"><b>Dune</b></label></br>' + 
+
+
+'	<input type="checkbox" id="crackSBld" class="duneCheck" onchange="verifyBuildingSelected(\'37\', \'crackSBld\');"><label for="crackSBld">Planet Cracker</label></br>' + 
+'	<input type="checkbox" id="fracSBld" class="duneCheck" onchange="verifyBuildingSelected(\'38\', \'fracSBld\');"><label for="fracSBld">Hydro Fracturer</label></br>' + 
+'	<input type="checkbox" id="spiceSBld" class="duneCheck" onchange="verifyBuildingSelected(\'39\', \'spiceSBld\');"><label for="spiceSBld">Spice Refinery</label></br></br>' + 
+
+'	<input type="checkbox" id="piscineChecker"><label for="piscineChecker" onclick="$(\'piscineCheck\').click();"><b>Piscine</b></label></br>' + 
+
+'	<input type="checkbox" id="reVeSBld" class="piscineCheck" onchange="verifyBuildingSelected(\'40\', \'reVeSBld\');"><label for="reVeSBld">Research Vessel</label></br>' + 
+'	<input type="checkbox" id="orbSBld" class="piscineCheck" onchange="verifyBuildingSelected(\'41\', \'orbSBld\');"><label for="orbSBld">Orbital Array</label></br></br>' + 
+
+'	<input type="checkbox" id="heliosChecker"><label for="heliosChecker" onclick="$(\'.heliosCheck\').click();"><b>Helios</b></label></br>' + 
+
+'	<input type="checkbox" id="sunSBld" class="heliosCheck" onchange="verifyBuildingSelected(\'42\', \'sunSBld\');"><label for="sunSBld">Sunlifter</label></br>' + 
+'	<input type="checkbox" id="contSBld" class="heliosCheck" onchange="verifyBuildingSelected(\'43\', \'contSBld\');"><label for="contSBld">Containment Chamber</label></br></br>' + 
+
+'	<input type="checkbox" id="terminusChecker"><label for="terminusChecker" onclick="$(\'.terminusCheck\').click();"><b>Terminus</b></label></br>' + 
+
+'	<input type="checkbox" id="crySBld" class="terminusCheck" onchange="verifyBuildingSelected(\'44\', \'crySBld\');"><label for="crySBld">Cryostation</label></br></br>' + 
+
+'	<input type="checkbox" id="kairoChecker"><label for="kairoChecker" onclick="$(\'.kairoCheck\').click();"><b>Kairo</b></label></br>' + 
+
+'	<input type="checkbox" id="beacSBld" class="kairoCheck" onchange="verifyBuildingSelected(\'45\', \'beacSBld\');"><label for="beacSBld">Space Beacon</label></br></br>' + 
+
+'	<input type="checkbox" id="yarnChecker"><label for="yarnChecker" onclick="$(\'.yarnCheck\').click();"><b>Yarn</b></label></br>' + 
+
+'	<input type="checkbox" id="terrSBld" class="yarnCheck" onchange="verifyBuildingSelected(\'46\', \'terrSBld\');"><label for="terrSBld">Terraforming Station</label></br>' + 
+'	<input type="checkbox" id="hydrSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'47\', \'hydrSBld\');"><label for="hydrSBld">Hydroponics</label></br></br>' + 
+
+'	<input type="checkbox" id="centaurusChecker"><label for="centaurusChecker" onclick="$(\'.centaurusCheck\').click();"><b>Centaurus System</b></label></br>' + 
+
+'	<input type="checkbox" id="tecSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'48\', \'tecSBld\');"><label for="tecSBld">Tectonic</label></br></br>' + 
+
+'</div>'
 
 function verifyBuildingSelected(buildingNumber, buildingCheckID) {
 	var bldIsChecked = document.getElementById(buildingCheckID).checked;
@@ -217,6 +302,7 @@ function verifyBuildingSelected(buildingNumber, buildingCheckID) {
 }
 
 $("#game").append(bldSelectAddition);
+$("#game").append(spaceSelectAddition);
 
 function clearOptionHelpDiv() {
 	$("#optionSelect").hide();
@@ -255,28 +341,15 @@ function autoSwitch(varCheck, varNumber, textChange, varName) {
 }
 
 function clearScript() {
-	$("#killSwitch").remove();
-	$("#efficiencyButton").remove();
-	$("#autoBuild").remove();
-	$("#autoCraft").remove();
-	$("#secResRatio").remove();
-	$("#secResText").remove();
-	$("#secResSpan").remove();
-	$("#autoHunt").remove();
-	$("#autoTrade").remove();
-	$("#autoPraise").remove();
-	$("#autoScience").remove();
-	$("#autoUpgrade").remove();
-	$("#autoParty").remove();
-	$("#autoAssign").remove();
-	$("#autoEnergy").remove();
-	$("#autoAssignChoice").remove();
 	$("#farRightColumn").remove();
-	$("#craftFur").remove();
 	$("#buildingSelect").remove();
+	$("#spaceSelect").remove();
 	$("#scriptOptions").remove();
 	clearInterval(runAllAutomation);
 	autoBuildCheck = null;
+	bldSelectAddition = null;
+	spaceSelectAddition = null;
+	htmlMenuAddition = null;
 }
 
 				// Show current kitten efficiency in the in-game log
@@ -314,31 +387,94 @@ function autoPraise(){
 	}
 }
 
-		// Check to see if we have the required resources
-function haveRes(model){
-	
-	var booTest = true;
-	for (i = 0; i < model.length; i++) {
-		var resName = model[i].name;
-		if (model[i].val < gamePage.resPool.get(resName).value && booTest != false) {
-			
-		} else {
-			booTest = false;
-		}
-	}
-	return booTest;
-	
-}
-
 		// Build buildings automatically
 function autoBuild() {		
 if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	
-	for (var i = 0; i < buildings.length; i++) {
-		if (buildings[i][1] != false && haveRes(gamePage.bld.getPrices(buildingsList[i])) !=false) {
-				$(".btnContent:contains('" + (buildings[i][0]) + "')").trigger("click");
-			}
+	var btn = gamePage.tabs[0].buttons;
+	
+	for (var z = 0; z < Math.min(gamePage.tabs[0].buttons.length, 32); z++) {
+		if (buildings[z][1] != false) {
+			if (gamePage.bld.getBuildingExt(buildingsList[z]).meta.unlocked) {
+				for (i = 2 ;i < gamePage.tabs[0].buttons.length; i++) {
+					try { 			
+						if (btn[i].model.metadata.name == buildingsList[z]) {
+							btn[i].controller.buyItem(btn[i].model, {}, function(result) {
+								if (result) {btn[i].update();}
+								});
+							} 
+					} catch(err) {
+					console.log(err);
+					}
+				}
+			}	
+		}
 	}
+	
+	if (gamePage.getResourcePerTick('coal') > 0.01 && steamOn < 1) {
+		gamePage.bld.getBuildingExt('steamworks').meta.on = gamePage.bld.getBuildingExt('steamworks').meta.val;
+		steamOn = 1;
+	}
+	
+}
+}			
+
+		// Build space stuff automatically
+function autoSpace() {		
+if (autoCheck[0] != "false") {	
+	
+	var origTab = gamePage.ui.activeTabId;	
+		
+		// Build space buildings
+	for (var z = 32; z < buildings.length; z++) {
+		if (buildings[z][1] != false) {		
+			
+		var spBuild = gamePage.tabs[6].planetPanels[buildings[z][2]].children;
+		
+			try { 			
+				for (i = 0 ;i < spBuild.length; i++) {
+					if (spBuild[i].model.metadata.name == buildingsList[z]) {
+						
+						if (gamePage.ui.activeTabId != "Space") {
+							gamePage.ui.activeTabId = 'Space'; gamePage.render(); // Change the tab so that we can build
+						}
+						
+						spBuild[i].controller.buyItem(spBuild[i].model, {}, function(result) {
+							if (result) {spBuild[i].update();}
+							});
+					} 
+				}		
+			} catch(err) {
+			console.log(err);
+			}
+			
+		}
+	}
+	
+		// Build space programs
+	if (programBuild != false) {
+		var spcProg = gamePage.tabs[6].GCPanel.children;
+		for (var i = 0; i < spcProg.length; i++) {
+			if (spcProg[i].model.metadata.unlocked && spcProg[i].model.on == 0) {
+				try { 		
+					
+					if (gamePage.ui.activeTabId != "Space") {
+					gamePage.ui.activeTabId = 'Space'; gamePage.render(); // Change the tab so that we can build
+					}
+					
+					spcProg[i].controller.buyItem(spcProg[i].model, {}, function(result) {
+						if (result) {spcProg[i].update();}
+						});
+				} catch(err) {
+				console.log(err);
+				}
+			}
+		}
+	}
+	
+	      if (origTab != gamePage.ui.activeTabId) {
+        gamePage.ui.activeTabId = origTab; gamePage.render();
+		  }
 	
 }
 }			
@@ -390,7 +526,7 @@ for (var i = 0; i < secondaryResources.length; i++) {
 	var secRes = gamePage.resPool.get(secondaryResources[i][1]);
 	var resMath = priRes.value / secondaryResources[i][2];	
 	
-	if (resMath > 1 && secRes.value < priRes.value && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
+	if (resMath > 1 && secRes.value < (priRes.value * (secResRatio / 100)) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
 		gamePage.craft(secondaryResources[i][1], (resMath * (secResRatio / 100)));
 	}
 }	
@@ -409,42 +545,56 @@ var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
 function autoResearch() {	
 if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 	var origTab = gamePage.ui.activeTabId;
-      
 	gamePage.ui.activeTabId = 'Science'; gamePage.render();
 	  
-	var techs = gamePage.science.techs;
+	var btn = gamePage.tabs[2].buttons;
 
-	 for (var i = 0; i < techs.length; i++) {
-		if (techs[i].unlocked && techs[i].researched != true && haveRes(gamePage.science.techs[i].prices) != false) {
-			$(".btnContent:contains('" + techs[i].label + "')").click();
-
+	 for (var i = 0; i < btn.length; i++) {
+		if (btn[i].model.metadata.unlocked && btn[i].model.metadata.researched != true) {
+			try { 			
+				btn[i].controller.buyItem(btn[i].model, {}, function(result) {
+					if (result) {btn[i].update();}
+					});
+			} catch(err) {
+			console.log(err);
 			}
+			
 		}
+	}
 	  
       if (origTab != gamePage.ui.activeTabId) {
         gamePage.ui.activeTabId = origTab; gamePage.render();
       }
 }
+
+
 }
 
+		// Auto Workshop upgrade , tab 3
 function autoWorkshop() {
-		// Auto Workshop upgrade
 if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
-var origTab = gamePage.ui.activeTabId;
-      
+	
+	var origTab = gamePage.ui.activeTabId;
 	gamePage.ui.activeTabId = 'Workshop'; gamePage.render();
 	  
-	var upgrades = gamePage.workshop.upgrades;
-	  
-	 for (var i = 0; i < upgrades.length; i++) {
-		if (upgrades[i].unlocked && upgrades[i].researched != true && haveRes(gamePage.workshop.upgrades[i].prices) != false) {
-			$(".btnContent:contains('" + upgrades[i].label + "')").click();
+	var btn = gamePage.tabs[3].buttons;
+
+	 for (var i = 0; i < btn.length; i++) {
+		if (btn[i].model.metadata.unlocked && btn[i].model.metadata.researched != true) {
+			try { 			
+				btn[i].controller.buyItem(btn[i].model, {}, function(result) {
+					if (result) {btn[i].update();}
+					});
+			} catch(err) {
+			console.log(err);
 			}
+			
 		}
+	}
 	 	  
-      if (origTab != gamePage.ui.activeTabId) {
-        gamePage.ui.activeTabId = origTab; gamePage.render();
-      }	
+    if (origTab != gamePage.ui.activeTabId) {
+    gamePage.ui.activeTabId = origTab; gamePage.render();
+    }	
 }
 
 }
@@ -528,15 +678,18 @@ var runAllAutomation = setInterval(function() {
 
 	autoNip();
 	autoPraise();
+	autoBuild();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
 		autoCraft();
 		autoHunt();
 		autoAssign();
-		autoBuild();
 		energyControl();
-		
+	}
+	
+	if (gamePage.timer.ticksTotal % 10 === 0) {
+		autoSpace();
 	}
 	
 	if (gamePage.timer.ticksTotal % 25 === 0) {
