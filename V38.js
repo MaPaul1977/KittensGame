@@ -1,5 +1,5 @@
  // These control the button statuses
-var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'true'];
+var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy', 'elder'];
 
  // These will allow quick selection of the buildings which consume energy
@@ -483,12 +483,16 @@ function autoTrade() {
 	if (autoCheck[3] != "false") {
 		var titRes = gamePage.resPool.get('titanium');
 		var unoRes = gamePage.resPool.get('unobtainium');
+		var necroRes = gamePage.resPool.get('necrocorn');
 		var goldResource = gamePage.resPool.get('gold');
 		var goldOneTwenty = gamePage.getResourcePerTick('gold') * 200;
 			if (goldResource.value > (goldResource.maxValue - goldOneTwenty)) {
 				
-				if (unoRes.value > 5000  && gamePage.diplomacy.get('leviathans').unlocked && gamePage.diplomacy.get('leviathans').duration != 0 && autoCheck[10] != false) {
+				if (unoRes.value > 5000  && gamePage.diplomacy.get('leviathans').unlocked && gamePage.diplomacy.get('leviathans').duration != 0 && autoCheck[10] == "true") {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("leviathans"));
+					/*if (necroRes => 1) {
+						gamePage.diplomacy.feedElders();
+					}*/
 				} else if (titRes.value < (titRes.maxValue * 0.9)  && gamePage.diplomacy.get('zebras').unlocked) {
 					gamePage.diplomacy.tradeAll(game.diplomacy.get("zebras"), (goldOneTwenty / 15));
 				} else if (gamePage.diplomacy.get('dragons').unlocked) {
