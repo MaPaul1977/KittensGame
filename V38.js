@@ -15,7 +15,8 @@ var proVar = gamePage.resPool.energyProd;
 var conVar = gamePage.resPool.energyCons;	
 var tickDownCounter = 1;
 var deadScript = "Script is dead";
-var furDerVal = 3;
+var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
+var furDerVal = 0;
 var autoChoice = "farmer";
 var resList = [];
 var secResRatio = 0;
@@ -163,17 +164,17 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<option value="scholar">Scholar</option>' +
 '<option value="priest">Priest</option>' +
 '<option value="miner">Miner</option>' +
-'<option value="hunter">Hunter</option>'
+'<option value="hunter">Hunter</option>' +
 '<option value="geologist">Geologist</option>' +
 '<option value="engineer">Engineer</option>' +
 '</select></br>' +
 
 '<button id="autoCraft" style="color:red" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
-'<select id="craftFur" size="1" onclick="setFurValue()">' +
-'<option value="1" selected="selected">Parchment</option>' +
-'<option value="2">Manuscript</option>' +
-'<option value="3">Compendium</option>' +
-'<option value="4">Blueprint</option>' +
+'<select id="craftFur" size="1" onclick="furDerVal = this.value;">' +
+'<option value="0" selected="selected">Parchment</option>' +
+'<option value="1">Manuscript</option>' +
+'<option value="2">Compendium</option>' +
+'<option value="3">Blueprint</option>' +
 '</select></br></br>' +
 
 '<label id="secResLabel"> Secondary Craft % </label>' + 
@@ -320,10 +321,6 @@ function clearHelpDiv() {
 
 function selectBuildings() {
 	$("#buildingSelect").toggle();
-}
-
-function setFurValue() {
-	furDerVal = $('#craftFur').val();
 }
 
 function setAutoAssignValue() {
@@ -535,11 +532,11 @@ for (var i = 0; i < secondaryResources.length; i++) {
 }	
 
 		//Craft the fur derivatives
-var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
-	for (var i = 0; i < furDerVal; i++) {
+	for (var i = furDerVal; i+1 > 0; i--) {
   		if (gamePage.workshop.getCraft(furDerivatives[i]).unlocked) { 
 				gamePage.craftAll(furDerivatives[i]); 
 		}
+
 	}
 }	
 }
