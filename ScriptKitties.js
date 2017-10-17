@@ -676,7 +676,7 @@ function autoNip() {
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
-	autoNip();
+	// autoNip();
 	autoPraise();
 	autoBuild();
 	
