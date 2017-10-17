@@ -666,7 +666,7 @@ function energyControl() {
 
 function autoNip() {
 	if (autoCheck[0] != "false") {
-		if (gamePage.bld.buildingsData[0].val < 100) {
+		if (gamePage.bld.buildingsData[0].val < 30) {
 			$(".btnContent:contains('Gather')").trigger("click");
 		}
 	}
