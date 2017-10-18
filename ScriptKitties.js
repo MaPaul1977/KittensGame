@@ -20,6 +20,7 @@ var autoChoice = "farmer";
 var resList = [];
 var secResRatio = 0;
 var steamOn = 0;
+var programBuild = false;
 
 
 var buildings = [
@@ -393,7 +394,7 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	
 	var btn = gamePage.tabs[0].buttons;
 	
-	for (var z = 0; z < Math.min(gamePage.tabs[0].buttons.length, 32); z++) {
+	for (var z = 0; z <  32; z++) {
 		if (buildings[z][1] != false) {
 			if (gamePage.bld.getBuildingExt(buildingsList[z]).meta.unlocked) {
 				for (i = 2 ;i < gamePage.tabs[0].buttons.length; i++) {
@@ -667,6 +668,7 @@ function energyControl() {
 function autoNip() {
 	if (autoCheck[0] != "false") {
 		if (gamePage.bld.buildingsData[0].val < 30) {
+			console.log("taco");
 			$(".btnContent:contains('Gather')").trigger("click");
 		}
 	}
@@ -676,7 +678,7 @@ function autoNip() {
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
-	// autoNip();
+	autoNip();
 	autoPraise();
 	autoBuild();
 	
@@ -702,4 +704,3 @@ var runAllAutomation = setInterval(function() {
 	}
 
 }, 200);
-
