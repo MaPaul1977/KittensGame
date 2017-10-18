@@ -668,6 +668,7 @@ function energyControl() {
 function autoNip() {
 	if (autoCheck[0] != "false") {
 		if (gamePage.bld.buildingsData[0].val < 30) {
+			console.log("taco");
 			$(".btnContent:contains('Gather')").trigger("click");
 		}
 	}
@@ -677,7 +678,7 @@ function autoNip() {
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
 
-	// autoNip();
+	autoNip();
 	autoPraise();
 	autoBuild();
 	
