@@ -18,7 +18,7 @@ var deadScript = "Script is dead";
 var furDerVal = 3;
 var autoChoice = "farmer";
 var resList = [];
-var secResRatio = 0;
+var secResRatio = 30;
 var steamOn = 0;
 var programBuild = false;
 
@@ -177,7 +177,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '</select></br></br>' +
 
 '<label id="secResLabel"> Secondary Craft % </label>' + 
-'<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="30"></span></br></br>' + 
+'<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="' + secResRatio + '"></span></br></br>' + 
 
 
 '<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
