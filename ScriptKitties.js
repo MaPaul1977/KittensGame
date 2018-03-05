@@ -391,11 +391,13 @@ function autoBuild() {
 						try {
 							if (btn[i].model.metadata.name == buildingsList[z]) {
 								btn[i].controller.buyItem(btn[i].model, {}, function(result) {
-									if (result) {btn[i].update();}
-									});
-								}
+									if (result) {
+										btn[i].update();
+									}
+								});
+							}
 						} catch(err) {
-						console.log(err);
+							console.log(err);
 						}
 					}
 				}
@@ -420,11 +422,12 @@ function autoSpace() {
 				var spBuild = gamePage.tabs[6].planetPanels[buildings[z][2]].children;
 
 				try {
-					for (i = 0 ;i < spBuild.length; i++) {
+					for (i = 0; i < spBuild.length; i++) {
 						if (spBuild[i].model.metadata.name == buildingsList[z]) {
-
+							// Change the tab so that we can build
 							if (gamePage.ui.activeTabId != "Space") {
-								gamePage.ui.activeTabId = 'Space'; gamePage.render(); // Change the tab so that we can build
+								gamePage.ui.activeTabId = 'Space';
+								gamePage.render();
 							}
 
 							spBuild[i].controller.buyItem(spBuild[i].model, {}, function(result) {
@@ -447,12 +450,16 @@ function autoSpace() {
 			for (var i = 0; i < spcProg.length; i++) {
 				if (spcProg[i].model.metadata.unlocked && spcProg[i].model.on == 0) {
 					try {
+						// Change the tab so that we can build
 						if (gamePage.ui.activeTabId != "Space") {
-							gamePage.ui.activeTabId = 'Space'; gamePage.render(); // Change the tab so that we can build
+							gamePage.ui.activeTabId = 'Space';
+							gamePage.render();
 						}
 
 						spcProg[i].controller.buyItem(spcProg[i].model, {}, function(result) {
-							if (result) {spcProg[i].update();}
+							if (result) {
+								spcProg[i].update();
+							}
 						});
 					} catch(err) {
 						console.log(err);
@@ -462,7 +469,8 @@ function autoSpace() {
 		}
 
 		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab; gamePage.render();
+			gamePage.ui.activeTabId = origTab;
+			gamePage.render();
 		}
 	}
 }
@@ -621,7 +629,8 @@ function autoCraft() {
 function autoResearch() {
 	if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
 		var origTab = gamePage.ui.activeTabId;
-		gamePage.ui.activeTabId = 'Science'; gamePage.render();
+		gamePage.ui.activeTabId = 'Science';
+		gamePage.render();
 
 		var btn = gamePage.tabs[2].buttons;
 
@@ -640,7 +649,8 @@ function autoResearch() {
 		}
 
 		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab; gamePage.render();
+			gamePage.ui.activeTabId = origTab;
+			gamePage.render();
 		}
 	}
 }
@@ -650,7 +660,8 @@ function autoWorkshop() {
 	if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
 
 		var origTab = gamePage.ui.activeTabId;
-		gamePage.ui.activeTabId = 'Workshop'; gamePage.render();
+		gamePage.ui.activeTabId = 'Workshop';
+		gamePage.render();
 
 		var btn = gamePage.tabs[3].buttons;
 
@@ -669,7 +680,8 @@ function autoWorkshop() {
 		}
 
 		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab; gamePage.render();
+			gamePage.ui.activeTabId = origTab;
+			gamePage.render();
 		}
 	}
 }
