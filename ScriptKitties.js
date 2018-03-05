@@ -541,8 +541,8 @@ function autoTrade() {
 			// Besides the titanium, trading with the Zebras will also return some iron; ensure there is enough room the stockpile for it
 			// A successful trade with the Zebras always returns iron; the amount starts at 300, boosted by your trade ratio and modified by the a seasonal modifier (-20% to +15%) and a random factor (-4% to +4%)
 			// For this 'worst case' calculation, we will assume the largest possible modifiers and that all trades succeed
-			// Additionally, we add 5 ticks worth of our current iron production, so that it won't overflow due to natural growth before the next time AutoCraft runs
-			var ironSpaceRequired = (tradesToPerform * 300 * (1 + gamePage.diplomacy.getTradeRatio()) * 1.15 * 1.04) + (gamePage.getResourcePerTick('iron') * 5);
+			// Additionally, we add enough ticks worth of our current iron production so that it won't overflow due to natural growth before the next time AutoCraft runs
+			var ironSpaceRequired = (tradesToPerform * 300 * (1 + gamePage.diplomacy.getTradeRatio()) * 1.15 * 1.04) + (gamePage.getResourcePerTick('iron') * dispatchFunctions.autoCraft.triggerInterval);
 			var ironResource = gamePage.resPool.get('iron');
 			if (ironSpaceRequired >= ironResource.maxValue) {
 				// Special case: returned iron exceeds max iron, so we just convert all existing iron to plates
