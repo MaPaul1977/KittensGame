@@ -393,6 +393,9 @@ function autoBuild() {
 								btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 									if (result) {
 										btn[i].update();
+
+										// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+										dispatchFunctions.autoBuild.triggerImmediate = true;
 									}
 								});
 							}
@@ -433,6 +436,9 @@ function autoSpace() {
 							spBuild[i].controller.buyItem(spBuild[i].model, {}, function(result) {
 								if (result) {
 									spBuild[i].update();
+
+									// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+									dispatchFunctions.autoSpace.triggerImmediate = true;
 								}
 							});
 						}
@@ -459,6 +465,9 @@ function autoSpace() {
 						spcProg[i].controller.buyItem(spcProg[i].model, {}, function(result) {
 							if (result) {
 								spcProg[i].update();
+
+								// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+								dispatchFunctions.autoSpace.triggerImmediate = true;
 							}
 						});
 					} catch(err) {
@@ -489,9 +498,9 @@ function autoTrade() {
 		gamePage.diplomacy.tradeAll(leviathansRace);
 	}
 
-	// Non-Leviathan trades are only performed if we are at or near our gold cap; since autoTrade is checked every 25 ticks, we abort if there's room at least 26 ticks of more gold production to avoid unnecessary waste
+	// Non-Leviathan trades are only performed if we are about to hit our gold cap; if we have room for enough gold to last until the next run of this function, abort
 	var goldResource = gamePage.resPool.get('gold');
-	if ((goldResource.value + (gamePage.getResourcePerTick('gold') * 26)) < goldResource.maxValue) {
+	if ((goldResource.value + (gamePage.getResourcePerTick('gold') * dispatchFunctions.autoTrade.triggerInterval)) < goldResource.maxValue) {
 		return;
 	}
 
@@ -585,10 +594,18 @@ function autoTrade() {
 // Hunt automatically
 function autoHunt() {
 	if (autoCheck[2] != "false") {
+		// Trigger the hunt if we're within 1 tick of maxing out our catpower
 		var catpower = gamePage.resPool.get('manpower');
-		if (catpower.value > (catpower.maxValue - 1)) {
+		var catpowerPerTick = gamePage.getResourcePerTick('manpower');
+		if ((catpower.value + catpowerPerTick) > catpower.maxValue) {
 			gamePage.village.huntAll();
 		}
+		
+		// Determine on which future tick our catpower resource will be maxed out, and set the dispatcher to call this function again on that tick
+		// Note that this does not /prevent/ the function from being called sooner due to another trigger condition
+		var ticksToFull = Math.floor((catpower.maxValue - catpower.value) / catpowerPerTick);
+		var curTick = gamePage.timer.ticksTotal;
+		dispatchFunctions.autoHunt.triggerTick = curTick + ticksToFull;
 	}
 }
 
@@ -598,7 +615,7 @@ function autoCraft() {
 		for (var i = 0; i < resources.length; i++) {
 			var curRes = gamePage.resPool.get(resources[i][0]);
 			var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
-			var resourcePerCraft = (resourcePerTick * 3);
+			var resourcePerCraft = (resourcePerTick * dispatchFunctions.autoCraft.triggerInterval);
 			if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 				gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
 			}
@@ -640,6 +657,9 @@ function autoResearch() {
 					btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 						if (result) {
 							btn[i].update();
+
+							// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+							dispatchFunctions.autoResearch.triggerImmediate = true;
 						}
 					});
 				} catch(err) {
@@ -658,7 +678,6 @@ function autoResearch() {
 // Auto Workshop upgrade , tab 3
 function autoWorkshop() {
 	if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
-
 		var origTab = gamePage.ui.activeTabId;
 		gamePage.ui.activeTabId = 'Workshop';
 		gamePage.render();
@@ -671,6 +690,9 @@ function autoWorkshop() {
 					btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 						if (result) {
 							btn[i].update();
+
+							// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+							dispatchFunctions.autoWorkshop.triggerImmediate = true;
 						}
 					});
 				} catch(err) {
@@ -706,8 +728,11 @@ function autoParty() {
 
 // Auto assign new kittens to selected job
 function autoAssign() {
-	if (autoCheck[8] != "false" && gamePage.village.getJob(autoChoice).unlocked) {
+	if (autoCheck[8] != "false" && gamePage.village.getJob(autoChoice).unlocked && (gamePage.village.getFreeKittens() > 0)) {
 		gamePage.village.assignJob(gamePage.village.getJob(autoChoice));
+
+		// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+		dispatchFunctions.autoAssign.triggerImmediate = true;
 	}
 }
 
@@ -716,6 +741,9 @@ function energyControl() {
 	if (autoCheck[9] != "false") {
 		proVar = gamePage.resPool.energyProd;
 		conVar = gamePage.resPool.energyCons;
+
+		// Preemptively set the triggerImmediate flag for this function, indicating it should be called again next tick
+		dispatchFunctions.energyControl.triggerImmediate = true;
 
 		if (bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 3)) {
 			bldAccelerator.on++;
@@ -747,6 +775,9 @@ function energyControl() {
 		} else if (bldAccelerator.on > 0 && proVar < conVar) {
 			bldAccelerator.on--;
 			conVar--;
+		} else {
+			// Clear the triggerImmediate flag, since no changes were actually made
+			dispatchFunctions.energyControl.triggerImmediate = false;
 		}
 	}
 }
@@ -756,34 +787,147 @@ function autoNip() {
 		if (gamePage.bld.buildingsData[0].val < 30) {
 			console.log("taco");
 			$(".btnContent:contains('Gather')").trigger("click");
+
+			// Set the triggerImmediate flag for this function, so that it is called again next tick
+			dispatchFunctions.autoNip.triggerImmediate = true;
 		}
 	}
 }
 
+
+
+var dispatchFunctions = {
+	autoCraft: {
+		functionRef: autoCraft,
+		triggerInterval: 5,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoObserve: {
+		functionRef: autoObserve,
+		triggerInterval: 5,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoBuild: {
+		functionRef: autoBuild,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoSpace: {
+		functionRef: autoSpace,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoAssign: {
+		functionRef: autoAssign,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	energyControl: {
+		functionRef: energyControl,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoResearch: {
+		functionRef: autoResearch,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoWorkshop: {
+		functionRef: autoWorkshop,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoNip: {
+		functionRef: autoNip,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoParty: {
+		functionRef: autoParty,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoTrade: {
+		functionRef: autoTrade,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoPraise: {
+		functionRef: autoPraise,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+	autoHunt: {
+		functionRef: autoHunt,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity
+	},
+};
+
+var dispatchOrder = [
+	'autoAssign',
+	'autoTrade',
+	'autoHunt',
+	'autoObserve',
+	'autoCraft',
+	'autoResearch',
+	'autoWorkshop',
+	'autoBuild',
+	'autoSpace',
+	'energyControl',
+	'autoNip',
+	'autoParty',
+	'autoPraise'
+];
+
+var lastTick = -1;
+
+
 // This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
 var runAllAutomation = setInterval(function() {
-	autoNip();
-	autoPraise();
-	autoBuild();
+	// Check how many ticks have passed since the last time we executed
+	var curTick = gamePage.timer.ticksTotal;
+	var ticksElapsed = curTick - lastTick;
 
-	if (gamePage.timer.ticksTotal % 3 === 0) {
-		autoObserve();
-		autoCraft();
-		autoHunt();
-		autoAssign();
-		energyControl();
+	// If this is still the same tick as when we last executed, abort
+	if (ticksElapsed < 1) {
+		return;
 	}
 
-	if (gamePage.timer.ticksTotal % 10 === 0) {
-		autoSpace();
+	// Dispatch each function in order
+	for (var i = 0; i < dispatchOrder.length; i++) {
+		curFunction = dispatchFunctions[dispatchOrder[i]];
+
+		// A function is triggered when any of 3 conditions are true:
+		//   * The current tick is a multiple of the function's dispatch interval
+		//   * The function set its triggerImmediate flag to true during its last run, indicating it wanted to be called again immediately
+		//   * The function set a triggerTick value, indicating a specific tick it wanted to be called again on, and that tick has arrived
+		// However, for the 1st and 3rd conditions, we must also account for the possibility that the dispatcher might not run every tick, in which case the function should be triggered as soon as possible after its intended trigger tick
+		if (curFunction.triggerImmediate || (curFunction.triggerTick <= curTick) || ((curTick % curFunction.triggerInterval) < ticksElapsed)) {
+			// Clear the triggerImmediate flag and the triggerTick value; if the function wants to use them again it must reset them during its execution
+			curFunction.triggerImmediate = false;
+			curFunction.triggerTick = Infinity;
+
+			// Execute the function
+			curFunction.functionRef();
+		}
 	}
 
-	if (gamePage.timer.ticksTotal % 25 === 0) {
-		autoResearch();
-		autoWorkshop();
-		autoParty();
-		autoTrade();
-	}
-}, 200);
+	// Update the last execution tick
+	lastTick = curTick;
+}, 150);
 
