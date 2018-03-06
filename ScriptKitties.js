@@ -564,7 +564,7 @@ function autoTrade() {
 		// Calculate the number of trades necessary to get the required uranium:
 		// First, calculate the amount returned by each trade if it manages to return any
 		// For uranium, this is 1 unit per trade boosted by your trade ratio, with no seasonal variations; the random variation is irrelevant since it cancels out
-		var expectedUraniumPerTrade = 1 * gamePage.diplomacy.getTradeRatio();
+		var expectedUraniumPerTrade = 1 * (1 + gamePage.diplomacy.getTradeRatio());
 		
 		// The Dragons are neutral, so trades never fail entirely
 
