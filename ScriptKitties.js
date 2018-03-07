@@ -583,6 +583,35 @@ function autoTrade() {
 		// Perform the trades
 		gamePage.diplomacy.tradeMultiple(dragonsRace, tradesToPerform);
 	}
+
+
+	// If it is possible to trade for coal and we more than 25 ticks away from filling our coal stockpile, we want to do so
+	var coalResource = gamePage.resPool.get('coal');
+	var spidersRace = gamePage.diplomacy.get("spiders");
+	maxTrades = gamePage.diplomacy.getMaxTradeAmt(spidersRace);
+	if (spidersRace.unlocked && (maxTrades > 0) && ((coalResource.value + (gamePage.getResourcePerTick('coal') * 25)) < coalResource.maxValue)) {
+		// Calculate the number of trades necessary to get the required coal:
+		// First, calculate the amount returned by each trade if it manages to return any
+		// For coal, this is 350 units per trade boosted by your trade ratio, modified by a seasonal modifier; the random variation is irrelevant since it cancels out
+		var expectedCoalPerTrade = 350 * (1 + gamePage.diplomacy.getTradeRatio()) * spidersRace.sells[0].seasons[gamePage.calendar.getCurSeason().name];
+
+		// Then modify that by the chance any given trade return extra because the Spiders are friendly
+		var bonusChance = 15 + ((gamePage.getEffect("standingRatio") + (gamePage.prestige.getPerk("diplomacy").researched ? 10 : 0)) / 2);
+		expectedTitaniumPerTrade *= 1 + (0.25 * (bonusChance <= 100 ? bonusChance : 100) / 100);
+
+		// The Spiders always return coal if a trade succeeds
+
+		// Finally, divide the expected coal per trade into the required amount of coal to get the expected number of trades required
+		var tradesToPerform = Math.ceil((coalResource.maxValue - coalResource.value) / expectedCoalPerTrade);
+
+		// However, we need to check it's actually possible to make that many trades, given our current resources, so that we don't try to perform an impossible number of trades
+		if (maxTrades < tradesToPerform) {
+			tradesToPerform = maxTrades;
+		}
+
+		// Perform the trades
+		gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
+	}
 }
 
 		// Hunt automatically
