@@ -500,12 +500,13 @@ function autoTrade() {
 		return;
 	}
 
-	// If it is possible to trade for titanium and we more than 25 ticks away from filling our titanium stockpile, we want to do so
+	// Check if it is possible to trade with the Zebras (i.e. Zebras are unlocked and we have enough resources for at least one trade) and that our titanium stockpile is not within a few ticks' production of full
 	var titaniumResource = gamePage.resPool.get('titanium');
 	var zebrasRace = gamePage.diplomacy.get("zebras");
 	var maxTrades = gamePage.diplomacy.getMaxTradeAmt(zebrasRace);
-	if (zebrasRace.unlocked && (maxTrades > 0) && ((titaniumResource.value + (gamePage.getResourcePerTick('titanium') * 25)) < titaniumResource.maxValue)) {
-		// Calculate the number of trades necessary to get the required titanium:
+	if (zebrasRace.unlocked && (maxTrades > 0) && (titaniumResource.value < (titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium') * 5, 1)))) {
+		// Calculate the number of trades expected to be necessary to fill up our titanium stockpile:
+
 		// First, calculate the amount returned by each trade if it manages to return any
 		// For titanium, this is purely a function of the number of ships you have with no seasonal or random variations and no effect from your trade ratio
 		var numShips = gamePage.resPool.get("ship").value;
@@ -524,93 +525,101 @@ function autoTrade() {
 		}
 
 		// Finally, divide the expected titanium per trade into the required amount of titanium to get the expected number of trades required
-		var tradesToPerform = Math.ceil((titaniumResource.maxValue - titaniumResource.value) / expectedTitaniumPerTrade);
-		
-		// However, we need to check it's actually possible to make that many trades, given our current resources, so that we don't try to perform an impossible number of trades
-		if (maxTrades < tradesToPerform) {
-			tradesToPerform = maxTrades;
-		}
+		var tradesRequired = (titaniumResource.maxValue - titaniumResource.value) / expectedTitaniumPerTrade;
 
+		// We should only execute trades if the required number of trades is at least 1, to avoid excessive waste
+		// However, the amount of titanium returned by a single trade can be arbitrarily large - a player could theoretically have enough ships to fill their stockpile in a single trade.
+		// So we will also trade if our the stockpile is below 90% full
+		if ((tradesRequired >= 1) || (titaniumResource.value < (titaniumResource.maxValue * 0.9))) {
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
 
-		if (gamePage.workshop.getCraft("plate").unlocked) {
-			// Besides the titanium, trading with the Zebras will also return some iron; ensure there is enough room the stockpile for it
-			// A successful trade with the Zebras always returns iron; the amount starts at 300, boosted by your trade ratio and modified by the a seasonal modifier (-20% to +15%) and a random factor (-4% to +4%)
-			// For this 'worst case' calculation, we will assume the largest possible modifiers and that all trades succeed
-			// Additionally, we add 5 ticks worth of our current iron production, so that it won't overflow due to natural growth before the next time AutoCraft runs
-			var ironSpaceRequired = (tradesToPerform * 300 * (1 + gamePage.diplomacy.getTradeRatio()) * 1.15 * 1.04) + (gamePage.getResourcePerTick('iron') * 5);
-			var ironResource = gamePage.resPool.get('iron');
-			if (ironSpaceRequired >= ironResource.maxValue) {
-				// Special case: returned iron exceeds max iron, so we just convert all existing iron to plates
-				gamePage.craftAll("plate");
-			} else if ((ironResource.value + ironSpaceRequired) > ironResource.maxValue) {
-				// Calculate how much, if any, of our existing iron needs to be converted to make room
-				var ironOverflow = (ironResource.value + ironSpaceRequired) - ironResource.maxValue;
+			if (gamePage.workshop.getCraft("plate").unlocked) {
+				// Besides the titanium, trading with the Zebras will also return some iron; ensure there is enough room the stockpile for it
+				// A successful trade with the Zebras always returns iron; the amount starts at 300, boosted by your trade ratio and modified by the a seasonal modifier (-20% to +15%) and a random factor (-4% to +4%)
+				// For this 'worst case' calculation, we will assume the largest possible modifiers and that all trades succeed
+				// Additionally, we add 5 ticks worth of our current iron production, so that it won't overflow due to natural growth before the next time AutoCraft runs
+				var ironSpaceRequired = (tradesToPerform * 300 * (1 + gamePage.diplomacy.getTradeRatio()) * 1.15 * 1.04) + (gamePage.getResourcePerTick('iron') * 5);
+				var ironResource = gamePage.resPool.get('iron');
+				if (ironSpaceRequired >= ironResource.maxValue) {
+					// Special case: returned iron exceeds max iron, so we just convert all existing iron to plates
+					gamePage.craftAll("plate");
+				} else if ((ironResource.value + ironSpaceRequired) > ironResource.maxValue) {
+					// Calculate how much, if any, of our existing iron needs to be converted to make room
+					var ironOverflow = (ironResource.value + ironSpaceRequired) - ironResource.maxValue;
 
-				// Each crafting of plates consumes 125 units of iron
-				gamePage.craft("plate", ironOverflow / 125);
+					// Each crafting of plates consumes 125 units of iron
+					gamePage.craft("plate", ironOverflow / 125);
+				}
 			}
+
+			// Perform the trades
+			gamePage.diplomacy.tradeMultiple(zebrasRace, tradesToPerform);
 		}
-
-
-		// Perform the trades
-		gamePage.diplomacy.tradeMultiple(zebrasRace, tradesToPerform);
 	}
 
-	// If it is possible to trade for uranium and we more than 25 ticks away from filling our uranium stockpile, we want to do so
+
+	// First, check if it is possible to trade with the Dragons (i.e. Dragons are unlocked and we have enough resources for at least one trade) and that our uranium stockpile is not within a few ticks' production of full
+	// Additionally, check that our titanium stockpile isn't filled beyond its normal capacity
+	// An over-filled resource stockpile, which usually comes from resetting the game with chronospheres, can be used to purchase things that cost more than the stockpile capacity
+	// It therefore represents an irreplaceable resource which should not be depleted automatically
 	var uraniumResource = gamePage.resPool.get('uranium');
 	var dragonsRace = gamePage.diplomacy.get("dragons");
 	maxTrades = gamePage.diplomacy.getMaxTradeAmt(dragonsRace);
-	if (dragonsRace.unlocked && (maxTrades > 0) && ((uraniumResource.value + (gamePage.getResourcePerTick('uranium') * 25)) < uraniumResource.maxValue)) {
-		// Calculate the number of trades necessary to get the required uranium:
+	if (dragonsRace.unlocked && (maxTrades > 0) && (uraniumResource.value < (uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium') * 5, 1))) && (titaniumResource.value < (titaniumResource.maxValue + 1))) {
+		// Calculate the number of trades expected to be necessary to fill up our uranium stockpile:
+
 		// First, calculate the amount returned by each trade if it manages to return any
-		// For uranium, this is 1 unit per trade boosted by your trade ratio, with no seasonal variations; the random variation is irrelevant since it cancels out
+		// For uranium, this is 1 unit per trade boosted by your trade ratio, with no seasonal variations; there's a random variation, but its irrelevant since it cancels itself out
 		var expectedUraniumPerTrade = 1 * (1 + gamePage.diplomacy.getTradeRatio());
-		
+
 		// The Dragons are neutral, so trades never fail entirely
 
 		// Then modify that by the chance any given trade will succeed but uranium won't be one of the resources returned
 		expectedUraniumPerTrade *= 0.95;
 
 		// Finally, divide the expected uranium per trade into the required amount of uranium to get the expected number of trades required
-		var tradesToPerform = Math.ceil((uraniumResource.maxValue - uraniumResource.value) / expectedUraniumPerTrade);
+		var tradesRequired = (uraniumResource.maxValue - uraniumResource.value) / expectedUraniumPerTrade;
 
-		// However, we need to check it's actually possible to make that many trades, given our current resources, so that we don't try to perform an impossible number of trades
-		if (maxTrades < tradesToPerform) {
-			tradesToPerform = maxTrades;
+		// We should only execute trades if the required number of trades is at least 1, to avoid excessive waste
+		if (tradesRequired >= 1) {
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
+
+			// Perform the trades
+			gamePage.diplomacy.tradeMultiple(dragonsRace, tradesToPerform);
 		}
-
-
-		// Perform the trades
-		gamePage.diplomacy.tradeMultiple(dragonsRace, tradesToPerform);
 	}
 
 
-	// If it is possible to trade for coal and we more than 25 ticks away from filling our coal stockpile, we want to do so
+	// First, check if it is possible to trade with the Spiders (i.e. Spiders are unlocked and we have enough resources for at least one trade) and that our coal stockpile is not within a few ticks' production of full
 	var coalResource = gamePage.resPool.get('coal');
 	var spidersRace = gamePage.diplomacy.get("spiders");
 	maxTrades = gamePage.diplomacy.getMaxTradeAmt(spidersRace);
-	if (spidersRace.unlocked && (maxTrades > 0) && ((coalResource.value + (gamePage.getResourcePerTick('coal') * 25)) < coalResource.maxValue)) {
-		// Calculate the number of trades necessary to get the required coal:
+	if (spidersRace.unlocked && (maxTrades > 0) && (coalResource.value < (coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal') * 5, 1)))) {
+		// Calculate the number of trades expected to be necessary to fill up our coal stockpile:
+
 		// First, calculate the amount returned by each trade if it manages to return any
-		// For coal, this is 350 units per trade boosted by your trade ratio, modified by a seasonal modifier; the random variation is irrelevant since it cancels out
+		// For coal, this is 350 units per trade boosted by your trade ratio, modified by a seasonal modifier; there's a random variation, but its irrelevant since it cancels itself out
 		var expectedCoalPerTrade = 350 * (1 + gamePage.diplomacy.getTradeRatio()) * spidersRace.sells[0].seasons[gamePage.calendar.getCurSeason().name];
 
 		// Then modify that by the chance any given trade return extra because the Spiders are friendly
 		var bonusChance = 15 + ((gamePage.getEffect("standingRatio") + (gamePage.prestige.getPerk("diplomacy").researched ? 10 : 0)) / 2);
-		expectedTitaniumPerTrade *= 1 + (0.25 * (bonusChance <= 100 ? bonusChance : 100) / 100);
+		expectedCoalPerTrade *= 1 + (0.25 * (bonusChance <= 100 ? bonusChance : 100) / 100);
 
 		// The Spiders always return coal if a trade succeeds
 
 		// Finally, divide the expected coal per trade into the required amount of coal to get the expected number of trades required
-		var tradesToPerform = Math.ceil((coalResource.maxValue - coalResource.value) / expectedCoalPerTrade);
+		var tradesRequired = (coalResource.maxValue - coalResource.value) / expectedCoalPerTrade;
 
-		// However, we need to check it's actually possible to make that many trades, given our current resources, so that we don't try to perform an impossible number of trades
-		if (maxTrades < tradesToPerform) {
-			tradesToPerform = maxTrades;
+		// We should only execute trades if the required number of trades is at least 1, to avoid excessive waste
+		if (tradesRequired >= 1) {
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
+
+			// Perform the trades
+			gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
 		}
-
-		// Perform the trades
-		gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
 	}
 }
 
