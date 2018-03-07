@@ -507,7 +507,7 @@ function autoTrade() {
 	if (zebrasRace.unlocked && (maxTrades > 0) && (titaniumResource.value < (titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium') * 5, 1)))) {
 		// Calculate the number of trades expected to be necessary to fill up our titanium stockpile:
 
-		// First, calculate the amount returned by each trade if it manages to return any
+		// First, calculate the amount of titanium returned by each trade if it manages to return any
 		// For titanium, this is purely a function of the number of ships you have with no seasonal or random variations and no effect from your trade ratio
 		var numShips = gamePage.resPool.get("ship").value;
 		var expectedTitaniumPerTrade = 1.5 + (1.5  * (numShips / 100) * 2);
@@ -531,7 +531,7 @@ function autoTrade() {
 		// However, the amount of titanium returned by a single trade can be arbitrarily large - a player could theoretically have enough ships to fill their stockpile in a single trade.
 		// So we will also trade if our the stockpile is below 90% full
 		if ((tradesRequired >= 1) || (titaniumResource.value < (titaniumResource.maxValue * 0.9))) {
-			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
 			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
 
 			if (gamePage.workshop.getCraft("plate").unlocked) {
@@ -569,11 +569,11 @@ function autoTrade() {
 	if (dragonsRace.unlocked && (maxTrades > 0) && (uraniumResource.value < (uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium') * 5, 1))) && (titaniumResource.value < (titaniumResource.maxValue + 1))) {
 		// Calculate the number of trades expected to be necessary to fill up our uranium stockpile:
 
-		// First, calculate the amount returned by each trade if it manages to return any
+		// First, calculate the amount or uranium returned by each trade if it manages to return any
 		// For uranium, this is 1 unit per trade boosted by your trade ratio, with no seasonal variations; there's a random variation, but its irrelevant since it cancels itself out
 		var expectedUraniumPerTrade = 1 * (1 + gamePage.diplomacy.getTradeRatio());
 
-		// The Dragons are neutral, so trades never fail entirely
+		// The Dragons are neutral, so trades never fail entirely nor return extra
 
 		// Then modify that by the chance any given trade will succeed but uranium won't be one of the resources returned
 		expectedUraniumPerTrade *= 0.95;
@@ -583,7 +583,7 @@ function autoTrade() {
 
 		// We should only execute trades if the required number of trades is at least 1, to avoid excessive waste
 		if (tradesRequired >= 1) {
-			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
 			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
 
 			// Perform the trades
@@ -599,7 +599,7 @@ function autoTrade() {
 	if (spidersRace.unlocked && (maxTrades > 0) && (coalResource.value < (coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal') * 5, 1)))) {
 		// Calculate the number of trades expected to be necessary to fill up our coal stockpile:
 
-		// First, calculate the amount returned by each trade if it manages to return any
+		// First, calculate the amount of coal returned by each trade if it manages to return any
 		// For coal, this is 350 units per trade boosted by your trade ratio, modified by a seasonal modifier; there's a random variation, but its irrelevant since it cancels itself out
 		var expectedCoalPerTrade = 350 * (1 + gamePage.diplomacy.getTradeRatio()) * spidersRace.sells[0].seasons[gamePage.calendar.getCurSeason().name];
 
@@ -614,12 +614,53 @@ function autoTrade() {
 
 		// We should only execute trades if the required number of trades is at least 1, to avoid excessive waste
 		if (tradesRequired >= 1) {
-			// If possible, we want to perform as many trades as necessary to fill the stockpile; otherwise we just do as many as we can
+			// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
 			var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
 
 			// Perform the trades
 			gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
 		}
+	}
+}
+
+
+// Trade for food to prevent starvation
+function emergencyTradeFood() {
+	// Check if it is possible to trade with the Sharks (i.e. Sharks are unlocked and we have enough resources for at least one trade) and if it is necessary (catnip production is negative and our catnip reserve is not enough to cover our deficit for at least 5 ticks)
+	var catnipResource = gamePage.resPool.get('catnip');
+	var sharksRace = gamePage.diplomacy.get("sharks");
+	var maxTrades = gamePage.diplomacy.getMaxTradeAmt(sharksRace);
+	var catnipPerTick = gamePage.getResourcePerTick('catnip');
+	if (sharksRace.unlocked && (maxTrades > 0) && (catnipPerTick < 0) && (catnipResource.value < (catnipPerTick * -5))) {
+		// Sanity check: It is theoretically possible that our catnip stockpile could be too small to hold the catnip reserve we are demanding, and is in fact actually full, in which case there's nothing we can do, so we abort
+		if (catnipResource.value > (catnipResource.maxValue - 1)) {
+			return;
+		}
+
+		// We don't want to fill up our catnip stockpile; that would be unnecessarily wasteful and increase the chance that autoBuild will just deplete it again buying catnip fields or pastures
+		// Instead, our target amount is 20% of our maximum, or enough to cover our deficit for 50 ticks (i.e. 10 days or 20 real-time seconds), whichever is more
+		var catnipTarget = Math.max(catnipResource.maxValue * 0.2, catnipPerTick * -50);
+
+		// Sanity check: 'enough to cover our deficit for 50 ticks' might be larger than our entire stockpile, so cap it at that
+		catnipTarget = Math.min(catnipTarget, catnipResource.maxValue);
+
+		// Calculate the number of trades expected to be necessary to acquire that much catnip:
+		// First, calculate the amount of catnip returned by each trade if it manages to return any
+		// For catnip, this is 35000 units per trade boosted by your trade ratio, modified by a seasonal modifier; there's a random variation, but its irrelevant since it cancels itself out
+		var expectedCatnipPerTrade = 35000 * (1 + gamePage.diplomacy.getTradeRatio()) * sharksRace.sells[0].seasons[gamePage.calendar.getCurSeason().name];
+
+		// The Sharks are neutral, so trades never fail entirely nor return extra
+
+		// The Sharks always return catnip if a trade succeeds
+
+		// Finally, divide the expected catnip per trade into the required amount of catnip to get the expected number of trades required
+		var tradesRequired = (catnipTarget - catnipResource.value) / expectedCatnipPerTrade;
+
+		// If possible, we want to perform as many trades as necessary to get the desired catnip; if we don't have enough resources to do that, we just do as many as we can
+		var tradesToPerform = Math.min(Math.ceil(tradesRequired), maxTrades);
+
+		// Perform the trades
+		gamePage.diplomacy.tradeMultiple(sharksRace, tradesToPerform);
 	}
 }
 
@@ -805,6 +846,7 @@ var runAllAutomation = setInterval(function() {
 	autoNip();
 	autoPraise();
 	autoBuild();
+	emergencyTradeFood();
 	
 	if (gamePage.timer.ticksTotal % 3 === 0) {
 		autoObserve();
@@ -828,3 +870,4 @@ var runAllAutomation = setInterval(function() {
 	}
 
 }, 200);
+
