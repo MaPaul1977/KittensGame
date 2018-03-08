@@ -2,6 +2,8 @@
 var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
 var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy'];
 
+var tradeMax = {uranium: false, coal: false};
+
  // These will allow quick selection of the buildings which consume energy
 var bldSmelter = gamePage.bld.buildingsData[15];
 var bldBioLab = gamePage.bld.buildingsData[9];
@@ -149,7 +151,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<a id="scriptOptions" onclick="selectOptions()"> | ScriptKitties </a>' +
 
-'<div id="optionSelect" style="display:none; margin-top:-400px; margin-left:-100px; width:200px" class="dialog help">' +
+'<div id="optionSelect" style="display:none; margin-top:-600px; margin-left:-100px; width:200px" class="dialog help">' +
 '<a href="#" onclick="clearOptionHelpDiv();" style="position: absolute; top: 10px; right: 15px;">close</a>' +
 
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> </br>' +
@@ -182,6 +184,8 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' +
 '<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
+'<input id= "tradeMaxUranium" type="checkbox" onclick="tradeMax.uranium = this.checked" /><label for="tradeMaxUranium">Maximize uranium trades</label></br>' +
+'<input id= "tradeMaxCoal" type="checkbox" onclick="tradeMax.coal = this.checked" /><label for="tradeMaxCoal">Maximize coal trades</label></br>' +
 '<button id="autoPraise" style="color:red" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button></br></br>' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button></br>' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button></br>' +
@@ -192,7 +196,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 $("#footerLinks").append(htmlMenuAddition);
 
-var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-400px; width:200px" class="dialog help">' +
+var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-500px; width:200px" class="dialog help">' +
 '<a href="#" onclick="$(\'#spaceSelect\').toggle(); $(\'#buildingSelect\').hide();" style="position: absolute; top: 10px; left: 15px;">space</a>' +
 '<a href="#" onclick="$(\'#buildingSelect\').hide();" style="position: absolute; top: 10px; right: 15px;">close</a>' +
 
@@ -655,22 +659,43 @@ function tradeDragons() {
 	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium') * 5, 0);
 
 
-	// Determine how many trades to perform
-	// We want to trade for just enough titanium to fill our stockpile
+	// Determine how many trades to perform depending on the current trade mode
+	if (tradeMax.uranium) {
+		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into steel
 
-	// Determine the amount of uranium needed to reach our target
-	var uraniumRequired = targetUranium - uraniumResource.value;
+		// Calculate the maximum number of trades we can make and fit the results into our target uranium level
+		var maxTradesFit = Math.floor(targetUranium / expectedUraniumPerTrade);
 
-	// Determine how many trades are needed to get that much uranium, rounded down
-	var tradesRequired = Math.floor(uraniumRequired / expectedUraniumPerTrade);
+		// If possible, we want to perform as many trades as we have the resources for; if we don't have enough space in the stockpile to do that, we just do as many as we can fit
+		var tradesToPerform = Math.min(maxTradesPossible, maxTradesFit);
 
-	// If no trades are necessary, we're done
-	if (tradesRequired < 1) {
-		return;
+
+		// Convert the excess uranium:
+		// Determine how much uranium those trades will return
+		var expectedUranium = tradesToPerform * expectedUraniumPerTrade;
+
+		// Determine how much existing uranium must be converted to steel to make room (up to a limit of 'all of it')
+		var uraniumOverflow = Math.min((uraniumResource.value + expectedUranium) - targetUranium, uraniumResource.value);
+
+		// Craft the necessary quantity of thorium, with each crafting consuming 250 units of uranium
+		gamePage.craft("thorium", uraniumOverflow / 250);
+	} else {
+		// We are in normal mode, which means we want to trade for just enough uranium to fill our stockpile
+
+		// Determine the amount of uranium needed to reach our target
+		var uraniumRequired = targetUranium - uraniumResource.value;
+
+		// Determine how many trades are needed to get that much uranium, rounded down
+		var tradesRequired = Math.floor(uraniumRequired / expectedUraniumPerTrade);
+
+		// If no trades are necessary, we're done
+		if (tradesRequired < 1) {
+			return;
+		}
+
+		// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
+		var tradesToPerform = Math.min(tradesRequired, maxTradesPossible);
 	}
-
-	// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
-	var tradesToPerform = Math.min(tradesRequired, maxTradesPossible);
 
 
 	// Perform the trades
@@ -717,22 +742,49 @@ function tradeSpiders() {
 	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal') * 5, 0);
 
 
-	// Determine how many trades to perform
-	// We want to trade for just enough coal to fill our stockpile
+	// Determine how many trades to perform depending on the current trade mode
+	if (tradeMax.coal) {
+		// We are in maximize mode, which means we want to trade for as much coal as possible, converting any excess into steel
 
-	// Determine the amount of coal needed to reach our target
-	var coalRequired = targetCoal - coalResource.value;
+		// Determine the maximum amount of coal we can covert to steel right now
+		var maxCoalCraftable = Math.min(coalResource.value, ironResource.value);
 
-	// Determine how many trades are needed to get that much coal, rounded down
-	var tradesRequired = Math.floor(coalRequired / expectedCoalPerTrade);
+		// Determine the maximum amount of space that we can make available in our coal stockpile right now
+		var maxCoalSpace = targetCoal - (coalResource.value - maxCoalCraftable);
 
-	// If no trades are necessary, we're done
-	if (tradesRequired < 1) {
-		return;
+		// Calculate the maximum number of trades we can make and fit the results into that space
+		var maxTradesFit = Math.floor(maxCoalSpace / expectedCoalPerTrade);
+
+		// If possible, we want to perform as many trades as we have the resources for; if we don't have enough space in the stockpile to do that, we just do as many as we can fit
+		var tradesToPerform = Math.min(maxTradesPossible, maxTradesFit);
+
+
+		// Convert the excess coal:
+		// Determine how much coal those trades will return
+		var expectedCoal = tradesToPerform * expectedCoalPerTrade;
+
+		// Determine how much existing coal must be converted to steel to make room (up to a limit of 'all of it')
+		var coalOverflow = Math.min((coalResource.value + expectedCoal) - targetCoal, coalResource.value);
+
+		// Craft the necessary quantity of steel, with each crafting consuming 100 units of coal
+		gamePage.craft("steel", coalOverflow / 100);
+	} else {
+		// We are in normal mode, which means we want to trade for just enough coal to fill our stockpile
+
+		// Determine the amount of coal needed to reach our target
+		var coalRequired = targetCoal - coalResource.value;
+
+		// Determine how many trades are needed to get that much coal, rounded down
+		var tradesRequired = Math.floor(coalRequired / expectedCoalPerTrade);
+
+		// If no trades are necessary, we're done
+		if (tradesRequired < 1) {
+			return;
+		}
+
+		// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
+		var tradesToPerform = Math.min(tradesRequired, maxTradesPossible);
 	}
-
-	// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
-	var tradesToPerform = Math.min(tradesRequired, maxTradesPossible);
 
 	// Perform the trades
 	gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
