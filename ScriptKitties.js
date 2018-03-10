@@ -1200,7 +1200,7 @@ var dispatchFunctions = {
 		autoButton: autoButtons.autoHunt
 	},
 	emergencyTradeFood: {
-		functionRef: autoHunt,
+		functionRef: emergencyTradeFood,
 		triggerInterval: 1,
 		triggerImmediate: true,
 		triggerTick: Infinity,
