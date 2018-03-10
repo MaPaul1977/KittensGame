@@ -855,7 +855,7 @@ function emergencyTradeFood() {
 	// For our purposes, that means we must have enough catnip to cover our deficit until the next time this function runs, plus a few extra ticks for safety
 	// We also want to trade if we are below 2% of our maximum catnip, to cover the edge case where we have /already/ run completely out of catnip and therefore have a catnip income of 0
 	var minSafeCatnip = Math.max((-gamePage.getResourcePerTick('catnip')) * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
-	if (catnipResource.value >  catnipPerTick * -5) {
+	if (catnipResource.value >  minSafeCatnip) {
 		return;
 	}
 
