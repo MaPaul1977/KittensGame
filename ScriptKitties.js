@@ -1009,7 +1009,7 @@ function emergencyTradeFood() {
 function autoHunt() {
 	// Trigger the hunt if we're within 1 tick of maxing out our catpower
 	var catpower = gamePage.resPool.get('manpower');
-	var catpowerPerTick = gamePage.getResourcePerTick('manpower');
+	var catpowerPerTick = gamePage.getResourcePerTick('manpower', true);
 	if ((catpower.value + catpowerPerTick) > catpower.maxValue) {
 		gamePage.village.huntAll();
 	}
