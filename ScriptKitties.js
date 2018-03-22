@@ -194,6 +194,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '</div>' +
 '</div>';
 
+
 $("#footerLinks").append(htmlMenuAddition);
 
 var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-top:-500px; width:200px" class="dialog help">' +
@@ -248,6 +249,7 @@ var bldSelectAddition = '<div id="buildingSelect" style="display:none; margin-to
 
 '</div>';
 
+
 var spaceSelectAddition = '<div id="spaceSelect" style="display:none; margin-top:-400px; width:200px" class="dialog help">' +
 '<a href="#" onclick="$(\'#spaceSelect\').hide(); $(\'#buildingSelect\').toggle();" style="position: absolute; top: 10px; left: 15px;">cath</a>' +
 '<a href="#" onclick="$(\'#spaceSelect\').hide();" style="position: absolute; top: 10px; right: 15px;">close</a>' +
@@ -300,6 +302,7 @@ var spaceSelectAddition = '<div id="spaceSelect" style="display:none; margin-top
 '	<input type="checkbox" id="tecSBld" class="centaurusCheck" onchange="verifyBuildingSelected(\'48\', \'tecSBld\');"><label for="tecSBld">Tectonic</label><br /><br />' +
 
 '</div>';
+
 
 function verifyBuildingSelected(buildingNumber, buildingCheckID) {
 	var bldIsChecked = document.getElementById(buildingCheckID).checked;
@@ -962,7 +965,7 @@ function autoParty() {
 		var culture = gamePage.resPool.get('culture').value;
 		var parchment = gamePage.resPool.get('parchment').value;
 
-		if (catpower > 1500 && culture > 5000 && parchment > 2500) {
+		if ((catpower > 1500) && (culture > 5000) && (parchment > 2500) && (gamePage.calendar.festivalDays < 4000)) {
 			if (gamePage.prestige.getPerk("carnivals").researched)
 				gamePage.village.holdFestival(1);
 			else if (gamePage.calendar.festivalDays = 0) {
