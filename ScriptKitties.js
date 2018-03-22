@@ -502,7 +502,6 @@ function autoSpace() {
 			} catch(err) {
 				console.log(err);
 			}
-
 		}
 	}
 
