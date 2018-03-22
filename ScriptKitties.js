@@ -55,7 +55,7 @@ var autoButtons = {
 	},
 }
 
-var tradeMax = {uranium: false, coal: false};
+var tradeMax = {uranium: false, coal: false, iron: false};
 
 // These will allow quick selection of the buildings which consume energy
 var bldSmelter = gamePage.bld.buildingsData[15];
@@ -239,6 +239,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="autoTrade" style="color:red" onclick="autoSwitch(autoButtons.autoTrade)"> Auto Trade </button><br />' +
 '<input id= "tradeMaxUranium" type="checkbox" onclick="tradeMax.uranium = this.checked" /><label for="tradeMaxUranium">Maximize uranium trades</label><br />' +
 '<input id= "tradeMaxCoal" type="checkbox" onclick="tradeMax.coal = this.checked" /><label for="tradeMaxCoal">Maximize coal trades</label><br />' +
+'<input id= "tradeMaxIron" type="checkbox" onclick="tradeMax.iron = this.checked" /><label for="tradeMaxIron">Maximize iron trades</label><br />' +
 '<button id="autoPraise" style="color:red" onclick="autoSwitch(autoButtons.autoPraise)"> Auto Praise </button><br /><br />' +
 '<button id="autoScience" style="color:red" onclick="autoSwitch(autoButtons.autoScience)"> Auto Science </button><br />' +
 '<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoButtons.autoUpgrade)"> Auto Upgrade </button><br />' +
@@ -562,6 +563,7 @@ function autoTrade() {
 	tradeZebras();
 	tradeDragons();
 	tradeSpiders();
+	tradeGriffins();
 }
 
 
@@ -843,6 +845,95 @@ function tradeSpiders() {
 
 	// Perform the trades
 	gamePage.diplomacy.tradeMultiple(spidersRace, tradesToPerform);
+}
+
+// Trade with the Griffins
+var griffinsRace = gamePage.diplomacy.get("griffins");
+function tradeGriffins() {
+	// Check that the Griffins are available to trade with
+	if (!griffinsRace.unlocked) {
+		return;
+	}
+
+	// Check that our iron stockpile isn't already filled beyond its normal capacity
+	if (ironResource.value > (ironResource.maxValue + 1)) {
+		return;
+	}
+
+	// Determine how many trades are possible given our current resources, and check that this number is not 0
+	var maxTradesPossible = gamePage.diplomacy.getMaxTradeAmt(griffinsRace);
+	if ((maxTradesPossible === undefined) || (maxTradesPossible < 1)) {
+		return;
+	}
+
+
+	// Determine how much iron we can expect from each trade, on average:
+
+	// First, calculate the amount of the desired resource returned by each trade if it manages to return any
+	// For iron, this is 250 units per trade boosted by your trade ratio, modified by a seasonal modifier; there's a random variation, but it's irrelevant since it cancels itself out
+	var expectedIronPerTrade = 250 * (1 + gamePage.diplomacy.getTradeRatio()) * griffinsRace.sells[0].seasons[gamePage.calendar.getCurSeason().name];
+
+	// Then modify that by the effects of race relations
+	// For the Griffins, this is the chance any given trade will fail because they are hostile
+	var tradeChance = 85 + gamePage.getEffect("standingRatio") + (diplomacyPerk.researched ? 10 : 0);
+	if (tradeChance < 100) {
+		expectedIronPerTrade *= tradeChance / 100;
+	}
+
+	// Then modify that by the chance that a successful trade will not include the desired resource in its results
+	// For iron, this never happens
+
+
+	// Our target final iron level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
+	var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
+
+
+	// Determine how many trades to perform depending on the current trade mode
+	if (tradeMax.iron) {
+		// We are in maximize mode, which means we want to trade for as much iron as possible, converting any excess into steel
+
+		// Determine the maximum amount of iron we can covert to steel right now
+		var maxIronCraftable = Math.min(ironResource.value, ironResource.value);
+
+		// Determine the maximum amount of space that we can make available in our iron stockpile right now
+		var maxIronSpace = targetIron - (ironResource.value - maxIronCraftable);
+
+		// Calculate the maximum number of trades we can make and fit the results into that space
+		var maxTradesFit = Math.floor(maxIronSpace / expectedIronPerTrade);
+
+		// If possible, we want to perform as many trades as we have the resources for; if we don't have enough space in the stockpile to do that, we just do as many as we can fit
+		var tradesToPerform = Math.min(maxTradesPossible, maxTradesFit);
+
+
+		// Convert the excess iron:
+		// Determine how much iron those trades will return
+		var expectedIron = tradesToPerform * expectedIronPerTrade;
+
+		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
+		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
+
+		// Craft the necessary quantity of steel, with each crafting consuming 100 units of iron
+		gamePage.craft("steel", ironOverflow / 100);
+	} else {
+		// We are in normal mode, which means we want to trade for just enough iron to fill our stockpile
+
+		// Determine the amount of iron needed to reach our target
+		var ironRequired = targetIron - ironResource.value;
+
+		// Determine how many trades are needed to get that much iron, rounded down
+		var tradesRequired = Math.floor(ironRequired / expectedIronPerTrade);
+
+		// If no trades are necessary, we're done
+		if (tradesRequired < 1) {
+			return;
+		}
+
+		// If possible, we want to perform as many trades as necessary to fill the stockpile; if we don't have enough resources to do that, we just do as many as we can
+		var tradesToPerform = Math.min(tradesRequired, maxTradesPossible);
+	}
+
+	// Perform the trades
+	gamePage.diplomacy.tradeMultiple(griffinsRace, tradesToPerform);
 }
 
 
