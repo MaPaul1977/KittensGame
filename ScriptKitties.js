@@ -602,8 +602,10 @@ function tradeZebras() {
 		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
 		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
 
-		// Craft the necessary quantity of plates, with each crafting consuming 125 units of iron
-		gamePage.craft("plate", ironOverflow / 125);
+		// Craft the necessary quantity of plates, if any, with each crafting consuming 125 units of iron
+		if (ironOverflow > 0) {
+			gamePage.craft("plate", ironOverflow / 125);
+		}
 	}
 
 
