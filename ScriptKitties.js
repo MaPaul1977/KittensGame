@@ -551,7 +551,7 @@ function autoTrade() {
 	}
 
 	// Non-Leviathan trades are only performed if we are about to hit our gold cap; if we have room for enough gold to last until the next run of this function, abort
-	if ((goldResource.value + (gamePage.getResourcePerTick('gold') * dispatchFunctions.autoTrade.triggerInterval)) < goldResource.maxValue) {
+	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * dispatchFunctions.autoTrade.triggerInterval)) < goldResource.maxValue) {
 		return;
 	}
 
@@ -608,7 +608,7 @@ function tradeZebras() {
 
 
 	// Our target final titanium level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our titanium income is positive)
-	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium') * dispatchFunctions.autoCraft.triggerInterval, 0);
+	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform
@@ -644,7 +644,7 @@ function tradeZebras() {
 
 
 		// Our target final iron level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
-		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron') * dispatchFunctions.autoCraft.triggerInterval, 0);
+		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 		// Determine how much iron those trades might return
@@ -653,8 +653,10 @@ function tradeZebras() {
 		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
 		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
 
-		// Craft the necessary quantity of plates, with each crafting consuming 125 units of iron
-		gamePage.craft("plate", ironOverflow / 125);
+		// Craft the necessary quantity of plates, if any, with each crafting consuming 125 units of iron
+		if (ironOverflow > 0) {
+			gamePage.craft("plate", ironOverflow / 125);
+		}
 	}
 
 
@@ -707,7 +709,7 @@ function tradeDragons() {
 
 
 	// Our target final uranium level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our uranium income is positive)
-	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium') * dispatchFunctions.autoCraft.triggerInterval, 0);
+	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -790,7 +792,7 @@ function tradeSpiders() {
 
 
 	// Our target final coal level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our coal income is positive)
-	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal') * dispatchFunctions.autoCraft.triggerInterval, 0);
+	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -854,7 +856,7 @@ function emergencyTradeFood() {
 	// We want to trade for food if our catnip reserves are dangerously low
 	// For our purposes, that means we must have enough catnip to cover our deficit until the next time this function runs, plus a few extra ticks for safety
 	// We also want to trade if we are below 2% of our maximum catnip, to cover the edge case where we have /already/ run completely out of catnip and therefore have a catnip income of 0
-	var minSafeCatnip = Math.max((-gamePage.getResourcePerTick('catnip')) * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
+	var minSafeCatnip = Math.max((-gamePage.getResourcePerTick('catnip'), true) * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
 	if (catnipResource.value >  minSafeCatnip) {
 		return;
 	}
@@ -930,7 +932,7 @@ function autoHunt() {
 function autoCraft() {
 	for (var i = 0; i < resources.length; i++) {
 		var curRes = gamePage.resPool.get(resources[i][0]);
-		var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
+		var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], true);
 		var resourcePerCraft = (resourcePerTick * dispatchFunctions.autoCraft.triggerInterval);
 		if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 			gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
