@@ -501,7 +501,7 @@ function autoTrade() {
 	}
 
 	// Non-Leviathan trades are only performed if we are at or near our gold cap; since autoTrade is checked every 25 ticks, we abort if there's room at least 26 ticks of more gold production to avoid unnecessary waste
-	if ((goldResource.value + (gamePage.getResourcePerTick('gold') * 26)) < goldResource.maxValue) {
+	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * 26)) < goldResource.maxValue) {
 		return;
 	}
 
@@ -557,7 +557,7 @@ function tradeZebras() {
 
 
 	// Our target final titanium level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our titanium income is positive)
-	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium') * 5, 0);
+	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium', true) * 5, 0);
 
 
 	// Determine how many trades to perform
@@ -593,7 +593,7 @@ function tradeZebras() {
 
 
 		// Our target final iron level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
-		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron') * 5, 0);
+		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * 5, 0);
 
 
 		// Determine how much iron those trades might return
@@ -658,7 +658,7 @@ function tradeDragons() {
 
 
 	// Our target final uranium level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our uranium income is positive)
-	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium') * 5, 0);
+	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium', true) * 5, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -741,7 +741,7 @@ function tradeSpiders() {
 
 
 	// Our target final coal level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our coal income is positive)
-	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal') * 5, 0);
+	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal', true) * 5, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -803,7 +803,7 @@ function emergencyTradeFood() {
 	}
 
 	// We only want to trade for food if our catnip reserves are dangerously low, defined as either being under 2% full or within 5 ticks of starvation
-	var catnipPerTick = gamePage.getResourcePerTick('catnip');
+	var catnipPerTick = gamePage.getResourcePerTick('catnip', true);
 	if (catnipResource.value > Math.max(catnipResource.maxValue * 0.02, catnipPerTick * -5)) {
 		return;
 	}
@@ -874,7 +874,7 @@ function autoCraft() {
 if (autoCheck[1] != "false") {
 for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
-    var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
+    var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], true);
     var resourcePerCraft = (resourcePerTick * 3);
 		if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 		gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
