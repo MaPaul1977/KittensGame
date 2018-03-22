@@ -1106,11 +1106,10 @@ function autoNip() {
 }
 
 
-
 var dispatchFunctions = {
 	autoCraft: {
 		functionRef: autoCraft,
-		triggerInterval: 5,
+		triggerInterval: 1,
 		triggerImmediate: true,
 		triggerTick: Infinity,
 		autoButton: autoButtons.autoCraft
@@ -1180,7 +1179,7 @@ var dispatchFunctions = {
 	},
 	autoTrade: {
 		functionRef: autoTrade,
-		triggerInterval: 20,
+		triggerInterval: 10,
 		triggerImmediate: true,
 		triggerTick: Infinity,
 		autoButton: autoButtons.autoTrade
@@ -1225,15 +1224,16 @@ var dispatchOrder = [
 	'autoPraise'
 ];
 
-var lastTick = -1;
-
-
 // This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
+var lastTick = Number.NEGATIVE_INFINITY;
 var runAllAutomation = setInterval(function() {
 	// Check how many ticks have passed since the last time we executed
-	var curTick = gamePage.timer.ticksTotal;
-	var ticksElapsed = curTick - lastTick;
+	const curTick = gamePage.timer.ticksTotal;
+	const ticksElapsed = curTick - lastTick;
+
+	// Update the last execution tick
+	lastTick = curTick;
 
 	// If this is still the same tick as when we last executed, abort
 	if (ticksElapsed < 1) {
@@ -1241,7 +1241,7 @@ var runAllAutomation = setInterval(function() {
 	}
 
 	// Dispatch each function in order
-	for (var i = 0; i < dispatchOrder.length; i++) {
+	for (let i = 0; i < dispatchOrder.length; i++) {
 		curFunction = dispatchFunctions[dispatchOrder[i]];
 
 		// A function is triggered when the corresponding button is active and any of 3 conditions are true:
@@ -1258,8 +1258,5 @@ var runAllAutomation = setInterval(function() {
 			curFunction.functionRef();
 		}
 	}
-
-	// Update the last execution tick
-	lastTick = curTick;
-}, 150);
+}, 50);
 
