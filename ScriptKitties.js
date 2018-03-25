@@ -599,8 +599,8 @@ function tradeZebras() {
 		// Determine how much iron those trades might return
 		var expectedIron = tradesToPerform * maxIronPerTrade;
 
-		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
-		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
+		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var ironOverflow = Math.max(Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value), 0);
 
 		// Craft the necessary quantity of plates, if any, with each crafting consuming 125 units of iron
 		if (ironOverflow > 0) {
@@ -663,7 +663,7 @@ function tradeDragons() {
 
 	// Determine how many trades to perform depending on the current trade mode
 	if (tradeMax.uranium) {
-		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into steel
+		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into thorium
 
 		// Calculate the maximum number of trades we can make and fit the results into our target uranium level
 		var maxTradesFit = Math.floor(targetUranium / expectedUraniumPerTrade);
@@ -676,8 +676,8 @@ function tradeDragons() {
 		// Determine how much uranium those trades will return
 		var expectedUranium = tradesToPerform * expectedUraniumPerTrade;
 
-		// Determine how much existing uranium must be converted to steel to make room (up to a limit of 'all of it')
-		var uraniumOverflow = Math.min((uraniumResource.value + expectedUranium) - targetUranium, uraniumResource.value);
+		// Determine how much existing uranium must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var uraniumOverflow = Math.max(Math.min((uraniumResource.value + expectedUranium) - targetUranium, uraniumResource.value), 0);
 
 		// Craft the necessary quantity of thorium, with each crafting consuming 250 units of uranium
 		gamePage.craft("thorium", uraniumOverflow / 250);
@@ -765,8 +765,8 @@ function tradeSpiders() {
 		// Determine how much coal those trades will return
 		var expectedCoal = tradesToPerform * expectedCoalPerTrade;
 
-		// Determine how much existing coal must be converted to steel to make room (up to a limit of 'all of it')
-		var coalOverflow = Math.min((coalResource.value + expectedCoal) - targetCoal, coalResource.value);
+		// Determine how much existing coal must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var coalOverflow = Math.max(Math.min((coalResource.value + expectedCoal) - targetCoal, coalResource.value), 0);
 
 		// Craft the necessary quantity of steel, with each crafting consuming 100 units of coal
 		gamePage.craft("steel", coalOverflow / 100);
@@ -854,8 +854,8 @@ function tradeGriffins() {
 		// Determine how much iron those trades will return
 		var expectedIron = tradesToPerform * expectedIronPerTrade;
 
-		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
-		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
+		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var ironOverflow = Math.max(Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value), 0);
 
 		// Craft the necessary quantity of steel, with each crafting consuming 100 units of iron
 		gamePage.craft("steel", ironOverflow / 100);
