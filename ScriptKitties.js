@@ -545,13 +545,23 @@ function autoSpace() {
 // Trade automatically
 var leviathansRace = gamePage.diplomacy.get("leviathans");
 var goldResource = gamePage.resPool.get('gold');
+var unobtainiumResource = gamePage.resPool.get('unobtainium');
 var diplomacyPerk = gamePage.prestige.getPerk("diplomacy");
 function autoTrade() {
-	// If it is possible to trade with the Leviathan, we always want to do so
-	if (leviathansRace.unlocked && (leviathansRace.duration > 0) && (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)) {
-		// If it is possible to trade with the Leviathans, we always wish to do so, and with the maximum amount possible
+	// Trading with the Leviathans causes their visit's remaining duration to be reduced to a cap
+	// Therefore, to maximize the number of trades we get per visit, we only want to trade if the duration is already under that cap or if our unobtainium stockpile is full
+	if (
+			leviathansRace.unlocked
+			&& (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)
+			&& (
+				(leviathansRace.duration <= 400 + (100 * leviathansRace.energy))
+				|| (unobtainiumResource.value + (gamePage.getResourcePerTick('unobtainium', true) * dispatchFunctions.autoTrade.triggerInterval) > unobtainiumResource.maxValue)
+			)
+	) {
+		// When we do trade with the Leviathans, we always trade the maximum amount possible
 		gamePage.diplomacy.tradeAll(leviathansRace);
 	}
+
 
 	// Non-Leviathan trades are only performed if we are about to hit our gold cap; if we have room for enough gold to last until the next run of this function, abort
 	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * dispatchFunctions.autoTrade.triggerInterval)) < goldResource.maxValue) {
@@ -654,8 +664,8 @@ function tradeZebras() {
 		// Determine how much iron those trades might return
 		var expectedIron = tradesToPerform * maxIronPerTrade;
 
-		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
-		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
+		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var ironOverflow = Math.max(Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value), 0);
 
 		// Craft the necessary quantity of plates, if any, with each crafting consuming 125 units of iron
 		if (ironOverflow > 0) {
@@ -717,8 +727,8 @@ function tradeDragons() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.uranium) {
-		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into steel
+	if (tradeMax.uranium && gamePage.workshop.getCraft('thorium').unlocked) {
+		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into thorium
 
 		// Calculate the maximum number of trades we can make and fit the results into our target uranium level
 		var maxTradesFit = Math.floor(targetUranium / expectedUraniumPerTrade);
@@ -731,8 +741,8 @@ function tradeDragons() {
 		// Determine how much uranium those trades will return
 		var expectedUranium = tradesToPerform * expectedUraniumPerTrade;
 
-		// Determine how much existing uranium must be converted to steel to make room (up to a limit of 'all of it')
-		var uraniumOverflow = Math.min((uraniumResource.value + expectedUranium) - targetUranium, uraniumResource.value);
+		// Determine how much existing uranium must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var uraniumOverflow = Math.max(Math.min((uraniumResource.value + expectedUranium) - targetUranium, uraniumResource.value), 0);
 
 		// Craft the necessary quantity of thorium, with each crafting consuming 250 units of uranium
 		gamePage.craft("thorium", uraniumOverflow / 250);
@@ -800,7 +810,7 @@ function tradeSpiders() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.coal) {
+	if (tradeMax.coal && gamePage.workshop.getCraft('steel').unlocked) {
 		// We are in maximize mode, which means we want to trade for as much coal as possible, converting any excess into steel
 
 		// Determine the maximum amount of coal we can covert to steel right now
@@ -820,8 +830,8 @@ function tradeSpiders() {
 		// Determine how much coal those trades will return
 		var expectedCoal = tradesToPerform * expectedCoalPerTrade;
 
-		// Determine how much existing coal must be converted to steel to make room (up to a limit of 'all of it')
-		var coalOverflow = Math.min((coalResource.value + expectedCoal) - targetCoal, coalResource.value);
+		// Determine how much existing coal must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var coalOverflow = Math.max(Math.min((coalResource.value + expectedCoal) - targetCoal, coalResource.value), 0);
 
 		// Craft the necessary quantity of steel, with each crafting consuming 100 units of coal
 		gamePage.craft("steel", coalOverflow / 100);
@@ -889,7 +899,7 @@ function tradeGriffins() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.iron) {
+	if (tradeMax.iron && gamePage.workshop.getCraft('steel').unlocked) {
 		// We are in maximize mode, which means we want to trade for as much iron as possible, converting any excess into steel
 
 		// Determine the maximum amount of iron we can covert to steel right now
@@ -909,8 +919,8 @@ function tradeGriffins() {
 		// Determine how much iron those trades will return
 		var expectedIron = tradesToPerform * expectedIronPerTrade;
 
-		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it')
-		var ironOverflow = Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value);
+		// Determine how much existing iron must be converted to steel to make room (up to a limit of 'all of it', minimum of 0)
+		var ironOverflow = Math.max(Math.min((ironResource.value + expectedIron) - targetIron, ironResource.value), 0);
 
 		// Craft the necessary quantity of steel, with each crafting consuming 100 units of iron
 		gamePage.craft("steel", ironOverflow / 100);
@@ -946,11 +956,11 @@ function emergencyTradeFood() {
 		return;
 	}
 
-	// We want to trade for food if our catnip reserves are dangerously low
-	// For our purposes, that means we must have enough catnip to cover our deficit until the next time this function runs, plus a few extra ticks for safety
-	// We also want to trade if we are below 2% of our maximum catnip, to cover the edge case where we have /already/ run completely out of catnip and therefore have a catnip income of 0
-	var minSafeCatnip = Math.max((-gamePage.getResourcePerTick('catnip'), true) * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
-	if (catnipResource.value >  minSafeCatnip) {
+	// If we have a clearly positive catnip income, there is no possibility of starvation and so no need to trade
+	// Alternately, if we have a reserve of enough catnip to cover our deficit until the next time this function runs (plus a few extra ticks for safety) or 2% of our maximum stockpile, whichever is larger, there is no need to trade yet
+	var catnipPerTick = gamePage.getResourcePerTick('catnip', true);
+	var minSafeCatnip = Math.max(-catnipPerTick * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
+	if ((catnipPerTick > 1) || (catnipResource.value >  minSafeCatnip)) {
 		return;
 	}
 
