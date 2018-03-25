@@ -662,7 +662,7 @@ function tradeDragons() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.uranium) {
+	if (tradeMax.uranium && gamePage.workshop.getCraft('thorium').unlocked) {
 		// We are in maximize mode, which means we want to trade for as much uranium as possible, converting any excess into thorium
 
 		// Calculate the maximum number of trades we can make and fit the results into our target uranium level
@@ -745,7 +745,7 @@ function tradeSpiders() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.coal) {
+	if (tradeMax.coal && gamePage.workshop.getCraft('steel').unlocked) {
 		// We are in maximize mode, which means we want to trade for as much coal as possible, converting any excess into steel
 
 		// Determine the maximum amount of coal we can covert to steel right now
@@ -834,7 +834,7 @@ function tradeGriffins() {
 
 
 	// Determine how many trades to perform depending on the current trade mode
-	if (tradeMax.iron) {
+	if (tradeMax.iron && gamePage.workshop.getCraft('steel').unlocked) {
 		// We are in maximize mode, which means we want to trade for as much iron as possible, converting any excess into steel
 
 		// Determine the maximum amount of iron we can covert to steel right now
