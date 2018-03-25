@@ -891,9 +891,10 @@ function emergencyTradeFood() {
 		return;
 	}
 
-	// We only want to trade for food if our catnip reserves are dangerously low, defined as either being under 2% full or within 5 ticks of starvation
+	// If we have a clearly positive catnip income, there is no possibility of starvation and so no need to trade
+	// Alternately, if we have a reserve of at least 5 ticks' consumption or 2% of our maximum stockpile, whichever is larger, there is no need to trade yet
 	var catnipPerTick = gamePage.getResourcePerTick('catnip', true);
-	if (catnipResource.value > Math.max(catnipResource.maxValue * 0.02, catnipPerTick * -5)) {
+	if ((catnipPerTick > 1) || (catnipResource.value > Math.max(catnipResource.maxValue * 0.02, catnipPerTick * -5))) {
 		return;
 	}
 
