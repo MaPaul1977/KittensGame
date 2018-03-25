@@ -434,8 +434,9 @@ function autoObserve() {
 }
 
 // Auto praise the sun
+var faithResource = gamePage.resPool.get('faith');
 function autoPraise(){
-	if (gamePage.bld.getBuildingExt('temple').meta.val > 0) {
+	if (gamePage.religionTab.visible && (gamePage.challenges.currentChallenge != 'atheism') && (faithResource.value > 0.0001)) {
 		gamePage.religion.praise();
 	}
 }
