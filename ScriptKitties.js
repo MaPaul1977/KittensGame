@@ -498,7 +498,6 @@ function autoTrade() {
 	// Therefore, to maximize the number of trades we get per visit, we only want to trade if the duration is already under that cap or if our unobtainium stockpile is full
 	if (
 			leviathansRace.unlocked
-			&& (leviathansRace.duration > 0)
 			&& (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)
 			&& ((leviathansRace.duration <= 400 + (100 * leviathansRace.energy)) || (unobtainiumResource.value + (gamePage.getResourcePerTick('unobtainium', true) * 26) > unobtainiumResource.maxValue))
 	) {
