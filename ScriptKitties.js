@@ -485,6 +485,7 @@ function autoSpace() {
 // Trade automatically
 var leviathansRace = gamePage.diplomacy.get("leviathans");
 var goldResource = gamePage.resPool.get('gold');
+var unobtainiumResource = gamePage.resPool.get('unobtainium');
 var diplomacyPerk = gamePage.prestige.getPerk("diplomacy");
 function autoTrade() {
 	// If the auto-trade button is not selected, abort
@@ -492,11 +493,19 @@ function autoTrade() {
 		return;
 	}
 
-	// If it is possible to trade with the Leviathan, we always want to do so
-	if (leviathansRace.unlocked && (leviathansRace.duration > 0) && (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)) {
-		// If it is possible to trade with the Leviathans, we always wish to do so, and with the maximum amount possible
+
+	// Trading with the Leviathans causes their visit's remaining duration to be reduced to a cap
+	// Therefore, to maximize the number of trades we get per visit, we only want to trade if the duration is already under that cap or if our unobtainium stockpile is full
+	if (
+			leviathansRace.unlocked
+			&& (leviathansRace.duration > 0)
+			&& (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)
+			&& ((leviathansRace.duration <= 400 + (100 * leviathansRace.energy)) || (unobtainiumResource.value + (gamePage.getResourcePerTick('unobtainium', true) * 26) > unobtainiumResource.maxValue))
+	) {
+		// When we do trade with the Leviathans, we always trade the maximum amount possible
 		gamePage.diplomacy.tradeAll(leviathansRace);
 	}
+
 
 	// Non-Leviathan trades are only performed if we are at or near our gold cap; since autoTrade is checked every 25 ticks, we abort if there's room at least 26 ticks of more gold production to avoid unnecessary waste
 	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * 26)) < goldResource.maxValue) {
