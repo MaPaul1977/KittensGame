@@ -1,6 +1,6 @@
  // These control the button statuses
-var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
-var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy'];
+var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'true'];
+var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy', 'steel'];
 
  // These will allow quick selection of the buildings which consume energy
 var bldSmelter = gamePage.bld.buildingsData[15];
@@ -131,8 +131,8 @@ var resources = [
        		["catnip", "wood", 50],
             ["wood", "beam", 175],
         	["minerals", "slab", 250],
-            ["coal", "steel", 100],
         	["iron", "plate", 125],
+            ["coal", "steel", 100],
             ["oil", "kerosene", 7500],
             ["uranium", "thorium", 250],
 			["unobtainium", "eludium", 1000]
@@ -178,7 +178,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 
 '<label id="secResLabel"> Secondary Craft % </label>' + 
 '<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="30"></span></br></br>' + 
-
+'<button id="autoSteel" style="color:red" onclick="autoSwitch(autoCheck[10], 10, autoName[10], \'autoSteel\')"> Make Steel </button></br>' + 
 
 '<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button></br>' + 
 '<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button></br>' +
@@ -401,7 +401,10 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 					try { 			
 						if (btn[i].model.metadata.name == buildingsList[z]) {
 							btn[i].controller.buyItem(btn[i].model, {}, function(result) {
-								if (result) {btn[i].update();}
+								if (result) {
+									gamePage.msg('Bought' + buildingsList[z]);
+									btn[i].update();
+								}
 								});
 							} 
 					} catch(err) {
@@ -413,6 +416,7 @@ if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
 	}
 	
 	if (gamePage.getResourcePerTick('coal') > 0.01 && steamOn < 1) {
+		gamePage.msg('Activating steam power');
 		gamePage.bld.getBuildingExt('steamworks').meta.on = gamePage.bld.getBuildingExt('steamworks').meta.val;
 		steamOn = 1;
 	}
@@ -516,6 +520,7 @@ for (var i = 0; i < resources.length; i++) {
     var curRes = gamePage.resPool.get(resources[i][0]);
     var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], 0);
     var resourcePerCraft = (resourcePerTick * 3);
+	  if ((resources[i][2] == 'steel') && (autoCheck[9] == "false")) { continue; }
 		if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
 		gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
 		}
