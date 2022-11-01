@@ -1,6 +1,59 @@
 // These control the button statuses
-var autoCheck = ['false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false', 'false'];
-var autoName = ['build', 'craft', 'hunt', 'trade', 'praise', 'science', 'upgrade', 'party', 'assign', 'energy'];
+var autoButtons = {
+	autoBuild: {
+		active: false,
+		swapName: 'build',
+		buttonId: 'autoBuild'
+	},
+	autoCraft: {
+		active: false,
+		swapName: 'craft',
+		buttonId: 'autoCraft'
+	},
+	autoHunt: {
+		active: false,
+		swapName: 'hunt',
+		buttonId: 'autoHunt'
+	},
+	autoTrade: {
+		active: false,
+		swapName: 'trade',
+		buttonId: 'autoTrade'
+	},
+	autoPraise: {
+		active: false,
+		swapName: 'praise',
+		buttonId: 'autoPraise'
+	},
+	autoScience: {
+		active: false,
+		swapName: 'science',
+		buttonId: 'autoScience'
+	},
+	autoUpgrade: {
+		active: false,
+		swapName: 'upgrade',
+		buttonId: 'autoUpgrade'
+	},
+	autoParty: {
+		active: false,
+		swapName: 'party',
+		buttonId: 'autoParty'
+	},
+	autoAssign: {
+		active: false,
+		swapName: 'assign',
+		buttonId: 'autoAssign'
+	},
+	autoEnergy: {
+		active: false,
+		swapName: 'energy',
+		buttonId: 'autoEnergy'
+	},
+	alwaysOn: {
+		active: true
+	},
+}
 
 var tradeMax = {uranium: false, coal: false, iron: false};
 
@@ -157,10 +210,10 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<button id="killSwitch" onclick="clearInterval(clearScript()); gamePage.msg(deadScript);">Kill Switch</button> <br />' +
 '<button id="efficiencyButton" onclick="kittenEfficiency()">Check Efficiency</button><br /><br />' +
 
-'<button id="autoBuild" style="color:red" onclick="autoSwitch(autoCheck[0], 0, autoName[0], \'autoBuild\');"> Auto Build </button><br />' +
+'<button id="autoBuild" style="color:red" onclick="autoSwitch(autoButtons.autoBuild);"> Auto Build </button><br />' +
 '<button id="bldSelect" onclick="selectBuildings()">Select Building</button><br />' +
 
-'<button id="autoAssign" style="color:red" onclick="autoSwitch(autoCheck[8], 8, autoName[8], \'autoAssign\')"> Auto Assign </button>' +
+'<button id="autoAssign" style="color:red" onclick="autoSwitch(autoButtons.autoAssign)"> Auto Assign </button>' +
 '<select id="autoAssignChoice" size="1" onclick="setAutoAssignValue()">' +
 '<option value="farmer" selected="selected">Farmer</option>' +
 '<option value="woodcutter">Woodcutter</option>' +
@@ -171,7 +224,7 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<option value="engineer">Engineer</option>' +
 '</select><br />' +
 
-'<button id="autoCraft" style="color:red" onclick="autoSwitch(autoCheck[1], 1, autoName[1], \'autoCraft\')"> Auto Craft </button>' +
+'<button id="autoCraft" style="color:red" onclick="autoSwitch(autoButtons.autoCraft)"> Auto Craft </button>' +
 '<select id="craftFur" size="1" onclick="setFurValue()">' +
 '<option value="1" selected="selected">Parchment</option>' +
 '<option value="2">Manuscript</option>' +
@@ -182,16 +235,16 @@ var htmlMenuAddition = '<div id="farRightColumn" class="column">' +
 '<label id="secResLabel"> Secondary Craft % </label>' +
 '<span id="secResSpan" title="Between 0 and 100"><input id="secResText" type="text" style="width:25px" onchange="secResRatio = this.value" value="30"></span><br /><br />' +
 
-'<button id="autoHunt" style="color:red" onclick="autoSwitch(autoCheck[2], 2, autoName[2], \'autoHunt\')"> Auto Hunt </button><br />' +
-'<button id="autoTrade" style="color:red" onclick="autoSwitch(autoCheck[3], 3, autoName[3], \'autoTrade\')"> Auto Trade </button><br />' +
+'<button id="autoHunt" style="color:red" onclick="autoSwitch(autoButtons.autoHunt)"> Auto Hunt </button><br />' +
+'<button id="autoTrade" style="color:red" onclick="autoSwitch(autoButtons.autoTrade)"> Auto Trade </button><br />' +
 '<input id= "tradeMaxUranium" type="checkbox" onclick="tradeMax.uranium = this.checked" /><label for="tradeMaxUranium">Maximize uranium trades</label><br />' +
 '<input id= "tradeMaxCoal" type="checkbox" onclick="tradeMax.coal = this.checked" /><label for="tradeMaxCoal">Maximize coal trades</label><br />' +
 '<input id= "tradeMaxIron" type="checkbox" onclick="tradeMax.iron = this.checked" /><label for="tradeMaxIron">Maximize iron trades</label><br />' +
-'<button id="autoPraise" style="color:red" onclick="autoSwitch(autoCheck[4], 4, autoName[4], \'autoPraise\')"> Auto Praise </button><br /><br />' +
-'<button id="autoScience" style="color:red" onclick="autoSwitch(autoCheck[5], 5, autoName[5], \'autoScience\')"> Auto Science </button><br />' +
-'<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoCheck[6], 6, autoName[6], \'autoUpgrade\')"> Auto Upgrade </button><br />' +
-'<button id="autoEnergy" style="color:red" onclick="autoSwitch(autoCheck[9], 9, autoName[9], \'autoEnergy\')"> Energy Control </button><br />' +
-'<button id="autoParty" style="color:red" onclick="autoSwitch(autoCheck[7], 7, autoName[7], \'autoParty\')"> Auto Party </button><br /><br />' +
+'<button id="autoPraise" style="color:red" onclick="autoSwitch(autoButtons.autoPraise)"> Auto Praise </button><br /><br />' +
+'<button id="autoScience" style="color:red" onclick="autoSwitch(autoButtons.autoScience)"> Auto Science </button><br />' +
+'<button id="autoUpgrade" style="color:red" onclick="autoSwitch(autoButtons.autoUpgrade)"> Auto Upgrade </button><br />' +
+'<button id="autoEnergy" style="color:red" onclick="autoSwitch(autoButtons.autoEnergy)"> Energy Control </button><br />' +
+'<button id="autoParty" style="color:red" onclick="autoSwitch(autoButtons.autoParty)"> Auto Party </button><br /><br />' +
 '</div>' +
 '</div>';
 
@@ -337,15 +390,15 @@ function setAutoAssignValue() {
 	autoChoice = $('#autoAssignChoice').val();
 }
 
-function autoSwitch(varCheck, varNumber, textChange, varName) {
-	if (varCheck == "false") {
-		autoCheck[varNumber] = "true";
-		gamePage.msg('Auto' + textChange + ' is now on');
-		document.getElementById(varName).style.color = 'black';
-	} else if (varCheck == "true") {
-		autoCheck[varNumber] = "false";
-		gamePage.msg('Auto' + textChange + ' is now off');
-		document.getElementById(varName).style.color = 'red';
+function autoSwitch(autoButton) {
+	if (autoButton.active) {
+		autoButton.active = false;
+		gamePage.msg('Auto' + autoButton.swapName + ' is now off');
+		document.getElementById(autoButton.buttonId).style.color = 'red';
+	} else {
+		autoButton.active = true;
+		gamePage.msg('Auto' + autoButton.swapName + ' is now on');
+		document.getElementById(autoButton.buttonId).style.color = 'black';
 	}
 }
 
@@ -381,15 +434,16 @@ function autoObserve() {
 }
 
 // Auto praise the sun
+var faithResource = gamePage.resPool.get('faith');
 function autoPraise(){
-	if (autoCheck[4] != "false" && gamePage.bld.getBuildingExt('temple').meta.val > 0) {
+	if (gamePage.religionTab.visible && (gamePage.challenges.currentChallenge != 'atheism') && (faithResource.value > 0.0001)) {
 		gamePage.religion.praise();
 	}
 }
 
 // Build buildings automatically
 function autoBuild() {
-	if (autoCheck[0] != "false" && gamePage.ui.activeTabId == 'Bonfire') {
+	if (gamePage.ui.activeTabId == 'Bonfire') {
 		var btn = gamePage.tabs[0].buttons;
 
 		for (var z = 0; z <  32; z++) {
@@ -401,6 +455,9 @@ function autoBuild() {
 								btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 									if (result) {
 										btn[i].update();
+
+										// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+										dispatchFunctions.autoBuild.triggerImmediate = true;
 									}
 								});
 							}
@@ -421,64 +478,68 @@ function autoBuild() {
 
 // Build space stuff automatically
 function autoSpace() {
-	if (autoCheck[0] != "false") {
-		var origTab = gamePage.ui.activeTabId;
+	var origTab = gamePage.ui.activeTabId;
 
-		// Build space buildings
-		for (var z = 32; z < buildings.length; z++) {
-			if (buildings[z][1] != false) {
-				var spBuild = gamePage.tabs[6].planetPanels[buildings[z][2]].children;
+	// Build space buildings
+	for (var z = 32; z < buildings.length; z++) {
+		if (buildings[z][1] != false) {
+			var spBuild = gamePage.tabs[6].planetPanels[buildings[z][2]].children;
 
-				try {
-					for (i = 0; i < spBuild.length; i++) {
-						if (spBuild[i].model.metadata.name == buildingsList[z]) {
-							// Change the tab so that we can build
-							if (gamePage.ui.activeTabId != "Space") {
-								gamePage.ui.activeTabId = 'Space';
-								gamePage.render();
-							}
-
-							spBuild[i].controller.buyItem(spBuild[i].model, {}, function(result) {
-								if (result) {
-									spBuild[i].update();
-								}
-							});
-						}
-					}
-				} catch(err) {
-					console.log(err);
-				}
-			}
-		}
-
-		// Build space programs
-		if (programBuild != false) {
-			var spcProg = gamePage.tabs[6].GCPanel.children;
-			for (var i = 0; i < spcProg.length; i++) {
-				if (spcProg[i].model.metadata.unlocked && spcProg[i].model.on == 0) {
-					try {
+			try {
+				for (i = 0; i < spBuild.length; i++) {
+					if (spBuild[i].model.metadata.name == buildingsList[z]) {
 						// Change the tab so that we can build
 						if (gamePage.ui.activeTabId != "Space") {
 							gamePage.ui.activeTabId = 'Space';
 							gamePage.render();
 						}
 
-						spcProg[i].controller.buyItem(spcProg[i].model, {}, function(result) {
+						spBuild[i].controller.buyItem(spBuild[i].model, {}, function(result) {
 							if (result) {
-								spcProg[i].update();
+								spBuild[i].update();
+
+								// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+								dispatchFunctions.autoSpace.triggerImmediate = true;
 							}
 						});
-					} catch(err) {
-						console.log(err);
 					}
+				}
+			} catch(err) {
+				console.log(err);
+			}
+		}
+	}
+
+	// Build space programs
+	if (programBuild != false) {
+		var spcProg = gamePage.tabs[6].GCPanel.children;
+		for (var i = 0; i < spcProg.length; i++) {
+			if (spcProg[i].model.metadata.unlocked && spcProg[i].model.on == 0) {
+				try {
+					// Change the tab so that we can build
+					if (gamePage.ui.activeTabId != "Space") {
+						gamePage.ui.activeTabId = 'Space';
+						gamePage.render();
+					}
+
+					spcProg[i].controller.buyItem(spcProg[i].model, {}, function(result) {
+						if (result) {
+							spcProg[i].update();
+
+							// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+							dispatchFunctions.autoSpace.triggerImmediate = true;
+						}
+					});
+				} catch(err) {
+					console.log(err);
 				}
 			}
 		}
+	}
 
-		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab;
-			gamePage.render();
-		}
+	if (origTab != gamePage.ui.activeTabId) {
+		gamePage.ui.activeTabId = origTab;
+		gamePage.render();
 	}
 }
 
@@ -488,26 +549,23 @@ var goldResource = gamePage.resPool.get('gold');
 var unobtainiumResource = gamePage.resPool.get('unobtainium');
 var diplomacyPerk = gamePage.prestige.getPerk("diplomacy");
 function autoTrade() {
-	// If the auto-trade button is not selected, abort
-	if (autoCheck[3] == "false") {
-		return;
-	}
-
-
 	// Trading with the Leviathans causes their visit's remaining duration to be reduced to a cap
 	// Therefore, to maximize the number of trades we get per visit, we only want to trade if the duration is already under that cap or if our unobtainium stockpile is full
 	if (
 			leviathansRace.unlocked
 			&& (gamePage.diplomacy.getMaxTradeAmt(leviathansRace) > 0)
-			&& ((leviathansRace.duration <= 400 + (100 * leviathansRace.energy)) || (unobtainiumResource.value + (gamePage.getResourcePerTick('unobtainium', true) * 26) > unobtainiumResource.maxValue))
+			&& (
+				(leviathansRace.duration <= 400 + (100 * leviathansRace.energy))
+				|| (unobtainiumResource.value + (gamePage.getResourcePerTick('unobtainium', true) * dispatchFunctions.autoTrade.triggerInterval) > unobtainiumResource.maxValue)
+			)
 	) {
 		// When we do trade with the Leviathans, we always trade the maximum amount possible
 		gamePage.diplomacy.tradeAll(leviathansRace);
 	}
 
 
-	// Non-Leviathan trades are only performed if we are at or near our gold cap; since autoTrade is checked every 25 ticks, we abort if there's room at least 26 ticks of more gold production to avoid unnecessary waste
-	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * 26)) < goldResource.maxValue) {
+	// Non-Leviathan trades are only performed if we are about to hit our gold cap; if we have room for enough gold to last until the next run of this function, abort
+	if ((goldResource.value + (gamePage.getResourcePerTick('gold', true) * dispatchFunctions.autoTrade.triggerInterval)) < goldResource.maxValue) {
 		return;
 	}
 
@@ -564,8 +622,8 @@ function tradeZebras() {
 	}
 
 
-	// Our target final titanium level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our titanium income is positive)
-	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium', true) * 5, 0);
+	// Our target final titanium level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our titanium income is positive)
+	var targetTitanium = titaniumResource.maxValue - Math.max(gamePage.getResourcePerTick('titanium', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform
@@ -600,8 +658,8 @@ function tradeZebras() {
 		var maxIronPerTrade = 300 * (1 + gamePage.diplomacy.getTradeRatio()) * zebrasRace.sells[0].seasons[gamePage.calendar.getCurSeason().name] * 1.04;
 
 
-		// Our target final iron level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
-		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * 5, 0);
+		// Our target final iron level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
+		var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 		// Determine how much iron those trades might return
@@ -665,8 +723,8 @@ function tradeDragons() {
 	expectedUraniumPerTrade *= 0.95;
 
 
-	// Our target final uranium level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our uranium income is positive)
-	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium', true) * 5, 0);
+	// Our target final uranium level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our uranium income is positive)
+	var targetUranium = uraniumResource.maxValue - Math.max(gamePage.getResourcePerTick('uranium', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -748,8 +806,8 @@ function tradeSpiders() {
 	// For coal, this never happens
 
 
-	// Our target final coal level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our coal income is positive)
-	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal', true) * 5, 0);
+	// Our target final coal level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our coal income is positive)
+	var targetCoal = coalResource.maxValue - Math.max(gamePage.getResourcePerTick('coal', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -837,8 +895,8 @@ function tradeGriffins() {
 	// For iron, this never happens
 
 
-	// Our target final iron level is the maximum capacity of our stockpile, minus a buffer of 5 ticks' production to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
-	var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * 5, 0);
+	// Our target final iron level is the maximum capacity of our stockpile, minus a buffer large enough to ensure it doesn't overflow before the next autoCraft() (assuming our iron income is positive)
+	var targetIron = ironResource.maxValue - Math.max(gamePage.getResourcePerTick('iron', true) * dispatchFunctions.autoCraft.triggerInterval, 0);
 
 
 	// Determine how many trades to perform depending on the current trade mode
@@ -900,13 +958,14 @@ function emergencyTradeFood() {
 	}
 
 	// If we have a clearly positive catnip income, there is no possibility of starvation and so no need to trade
-	// Alternately, if we have a reserve of at least 5 ticks' consumption or 2% of our maximum stockpile, whichever is larger, there is no need to trade yet
+	// Alternately, if we have a reserve of enough catnip to cover our deficit until the next time this function runs (plus a few extra ticks for safety) or 2% of our maximum stockpile, whichever is larger, there is no need to trade yet
 	var catnipPerTick = gamePage.getResourcePerTick('catnip', true);
-	if ((catnipPerTick > 1) || (catnipResource.value > Math.max(catnipResource.maxValue * 0.02, catnipPerTick * -5))) {
+	var minSafeCatnip = Math.max(-catnipPerTick * (dispatchFunctions.emergencyTradeFood.triggerInterval + 4), catnipResource.maxValue * 0.02);
+	if ((catnipPerTick > 1) || (catnipResource.value >  minSafeCatnip)) {
 		return;
 	}
 
-	// Sanity check: It is theoretically possible that our catnip stockpile does not contain the 5-tick reserve we are demanding, yet is actually already full, because its simply too small to hold that much catnip, in which case there's nothing more we can do
+	// Sanity check: It is theoretically possible that our catnip stockpile does not contain the reserve we are demanding, yet is actually already full, because its simply too small to hold that much catnip, in which case there's nothing more we can do
 	if (catnipResource.value > (catnipResource.maxValue - 1)) {
 		return;
 	}
@@ -932,15 +991,15 @@ function emergencyTradeFood() {
 
 
 	// We don't want to fill up our catnip stockpile; that would be unnecessarily wasteful and increase the chance that autoBuild will just deplete it again buying catnip fields or pastures
-	// Instead, our target amount is 20% of our maximum, or enough to cover our deficit for 50 ticks (i.e. 10 days or 20 real-time seconds), whichever is more
-	var targetCatnip = Math.max(catnipResource.maxValue * 0.2, catnipPerTick * -50);
+	// Instead, our target amount is 10 times our trigger amount
+	var targetCatnip = minSafeCatnip * 10;
 
-	// Sanity check: 'enough to cover our deficit for 50 ticks' might be larger than our entire stockpile, so cap it at that
+	// Sanity check: '10 times our trigger amount' might be larger than our entire stockpile, so cap it at that
 	targetCatnip = Math.min(targetCatnip, catnipResource.maxValue);
 
 
 	// Determine how many trades to perform
-	// We want to trade for just enough catnip to fill our stockpile
+	// We want to trade for just enough catnip to fill our stockpile to the calculated level
 
 	// Determine the amount of catnip needed to reach our target
 	var catnipRequired = targetCatnip - catnipResource.value;
@@ -959,50 +1018,55 @@ function emergencyTradeFood() {
 
 // Hunt automatically
 function autoHunt() {
-	if (autoCheck[2] != "false") {
-		var catpower = gamePage.resPool.get('manpower');
-		if (catpower.value > (catpower.maxValue - 1)) {
-			gamePage.village.huntAll();
-		}
+	// Trigger the hunt if we're within 1 tick of maxing out our catpower
+	var catpower = gamePage.resPool.get('manpower');
+	var catpowerPerTick = gamePage.getResourcePerTick('manpower', true);
+	if ((catpower.value + catpowerPerTick) > catpower.maxValue) {
+		gamePage.village.huntAll();
 	}
+
+	// Determine on which future tick our catpower resource will be maxed out, and set the dispatcher to call this function again on that tick
+	// Note that this does not /prevent/ the function from being called sooner due to another trigger condition
+	var ticksToFull = Math.floor((catpower.maxValue - catpower.value) / catpowerPerTick);
+	var curTick = gamePage.timer.ticksTotal;
+	dispatchFunctions.autoHunt.triggerTick = curTick + ticksToFull;
 }
 
 // Craft primary resources automatically
 function autoCraft() {
-	if (autoCheck[1] != "false") {
-		for (var i = 0; i < resources.length; i++) {
-			var curRes = gamePage.resPool.get(resources[i][0]);
-			var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], true);
-			var resourcePerCraft = (resourcePerTick * 3);
-			if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
-				gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
-			}
+	for (var i = 0; i < resources.length; i++) {
+		var curRes = gamePage.resPool.get(resources[i][0]);
+		var resourcePerTick = gamePage.getResourcePerTick(resources[i][0], true);
+		var resourcePerCraft = (resourcePerTick * dispatchFunctions.autoCraft.triggerInterval);
+		if (curRes.value > (curRes.maxValue - resourcePerCraft) && gamePage.workshop.getCraft(resources[i][1]).unlocked) {
+			gamePage.craft(resources[i][1], (resourcePerCraft / resources[i][2]));
 		}
+	}
 
-		// Craft secondary resources automatically if primary craftable is > secondary craftable
-		for (var i = 0; i < secondaryResources.length; i++) {
-			var priRes = gamePage.resPool.get(secondaryResources[i][0]);
-			var secRes = gamePage.resPool.get(secondaryResources[i][1]);
-			var resMath = priRes.value / secondaryResources[i][2];
+	// Craft secondary resources automatically if primary craftable is > secondary craftable
+	for (var i = 0; i < secondaryResources.length; i++) {
+		var priRes = gamePage.resPool.get(secondaryResources[i][0]);
+		var secRes = gamePage.resPool.get(secondaryResources[i][1]);
+		var resMath = priRes.value / secondaryResources[i][2];
 
-			if (resMath > 1 && secRes.value < (priRes.value * (secResRatio / 100)) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
-				gamePage.craft(secondaryResources[i][1], (resMath * (secResRatio / 100)));
-			}
+		if (resMath > 1 && secRes.value < (priRes.value * (secResRatio / 100)) && gamePage.workshop.getCraft(secondaryResources[i][1]).unlocked) {
+			gamePage.craft(secondaryResources[i][1], (resMath * (secResRatio / 100)));
 		}
+	}
 
-		//Craft the fur derivatives
-		var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
-		for (var i = 0; i < furDerVal; i++) {
-			if (gamePage.workshop.getCraft(furDerivatives[i]).unlocked) {
-				gamePage.craftAll(furDerivatives[i]);
-			}
+
+	//Craft the fur derivatives
+	var furDerivatives = ['parchment', 'manuscript', 'compedium', 'blueprint'];
+	for (var i = 0; i < furDerVal; i++) {
+		if (gamePage.workshop.getCraft(furDerivatives[i]).unlocked) {
+			gamePage.craftAll(furDerivatives[i]);
 		}
 	}
 }
 
 // Auto Research
 function autoResearch() {
-	if (autoCheck[5] != "false" && gamePage.libraryTab.visible != false) {
+	if (gamePage.libraryTab.visible) {
 		var origTab = gamePage.ui.activeTabId;
 		gamePage.ui.activeTabId = 'Science';
 		gamePage.render();
@@ -1015,6 +1079,9 @@ function autoResearch() {
 					btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 						if (result) {
 							btn[i].update();
+
+							// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+							dispatchFunctions.autoResearch.triggerImmediate = true;
 						}
 					});
 				} catch(err) {
@@ -1024,14 +1091,15 @@ function autoResearch() {
 		}
 
 		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab; gamePage.render();
+			gamePage.ui.activeTabId = origTab;
+			gamePage.render();
 		}
 	}
 }
 
 // Auto Workshop upgrade , tab 3
 function autoWorkshop() {
-	if (autoCheck[6] != "false" && gamePage.workshopTab.visible != false) {
+	if (gamePage.workshopTab.visible) {
 		var origTab = gamePage.ui.activeTabId;
 		gamePage.ui.activeTabId = 'Workshop';
 		gamePage.render();
@@ -1044,6 +1112,9 @@ function autoWorkshop() {
 					btn[i].controller.buyItem(btn[i].model, {}, function(result) {
 						if (result) {
 							btn[i].update();
+
+							// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+							dispatchFunctions.autoWorkshop.triggerImmediate = true;
 						}
 					});
 				} catch(err) {
@@ -1053,14 +1124,15 @@ function autoWorkshop() {
 		}
 
 		if (origTab != gamePage.ui.activeTabId) {
-			gamePage.ui.activeTabId = origTab; gamePage.render();
+			gamePage.ui.activeTabId = origTab;
+			gamePage.render();
 		}
 	}
 }
 
 // Festival automatically
 function autoParty() {
-	if (autoCheck[7] != "false" && gamePage.science.get("drama").researched) {
+	if (gamePage.science.get("drama").researched) {
 		var catpower = gamePage.resPool.get('manpower').value;
 		var culture = gamePage.resPool.get('culture').value;
 		var parchment = gamePage.resPool.get('parchment').value;
@@ -1078,86 +1150,219 @@ function autoParty() {
 
 // Auto assign new kittens to selected job
 function autoAssign() {
-	if (autoCheck[8] != "false" && gamePage.village.getJob(autoChoice).unlocked) {
+	if (gamePage.village.getJob(autoChoice).unlocked && (gamePage.village.getFreeKittens() > 0)) {
 		gamePage.village.assignJob(gamePage.village.getJob(autoChoice));
+
+		// Set the triggerImmediate flag for this function, indicating it should be called again next tick
+		dispatchFunctions.autoAssign.triggerImmediate = true;
 	}
 }
 
 // Control Energy Consumption
 function energyControl() {
-	if (autoCheck[9] != "false") {
-		proVar = gamePage.resPool.energyProd;
-		conVar = gamePage.resPool.energyCons;
+	proVar = gamePage.resPool.energyProd;
+	conVar = gamePage.resPool.energyCons;
 
-		if (bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 3)) {
-			bldAccelerator.on++;
-			conVar++;
-		} else if (bldCalciner.val > bldCalciner.on && proVar > (conVar + 3)) {
-			bldCalciner.on++;
-			conVar++;
-		} else if (bldFactory.val > bldFactory.on && proVar > (conVar + 3)) {
-			bldFactory.on++;
-			conVar++;
-		} else if (bldOilWell.val > bldOilWell.on && proVar > (conVar + 3)) {
-			bldOilWell.on++;
-			conVar++;
-		} else if (bldBioLab.val > bldBioLab.on && proVar > (conVar + 3)) {
-			bldBioLab.on++;
-			conVar++;
-		} else if (bldBioLab.on > 0 && proVar < conVar) {
-			bldBioLab.on--;
-			conVar--;
-		} else if (bldOilWell.on > 0 && proVar < conVar) {
-			bldOilWell.on--;
-			conVar--;
-		} else if (bldFactory.on > 0 && proVar < conVar) {
-			bldFactory.on--;
-			conVar--;
-		} else if (bldCalciner.on > 0 && proVar < conVar) {
-			bldCalciner.on--;
-			conVar--;
-		} else if (bldAccelerator.on > 0 && proVar < conVar) {
-			bldAccelerator.on--;
-			conVar--;
-		}
+	// Preemptively set the triggerImmediate flag for this function, indicating it should be called again next tick
+	dispatchFunctions.energyControl.triggerImmediate = true;
+
+	if (bldAccelerator.val > bldAccelerator.on && proVar > (conVar + 3)) {
+		bldAccelerator.on++;
+		conVar++;
+	} else if (bldCalciner.val > bldCalciner.on && proVar > (conVar + 3)) {
+		bldCalciner.on++;
+		conVar++;
+	} else if (bldFactory.val > bldFactory.on && proVar > (conVar + 3)) {
+		bldFactory.on++;
+		conVar++;
+	} else if (bldOilWell.val > bldOilWell.on && proVar > (conVar + 3)) {
+		bldOilWell.on++;
+		conVar++;
+	} else if (bldBioLab.val > bldBioLab.on && proVar > (conVar + 3)) {
+		bldBioLab.on++;
+		conVar++;
+	} else if (bldBioLab.on > 0 && proVar < conVar) {
+		bldBioLab.on--;
+		conVar--;
+	} else if (bldOilWell.on > 0 && proVar < conVar) {
+		bldOilWell.on--;
+		conVar--;
+	} else if (bldFactory.on > 0 && proVar < conVar) {
+		bldFactory.on--;
+		conVar--;
+	} else if (bldCalciner.on > 0 && proVar < conVar) {
+		bldCalciner.on--;
+		conVar--;
+	} else if (bldAccelerator.on > 0 && proVar < conVar) {
+		bldAccelerator.on--;
+		conVar--;
+	} else {
+		// Clear the triggerImmediate flag, since no changes were actually made
+		dispatchFunctions.energyControl.triggerImmediate = false;
 	}
 }
 
 function autoNip() {
-	if (autoCheck[0] != "false") {
-		if (gamePage.bld.buildingsData[0].val < 30) {
-			console.log("taco");
-			$(".btnContent:contains('Gather')").trigger("click");
-		}
+	if (gamePage.bld.buildingsData[0].val < 30) {
+		$(".btnContent:contains('Gather')").trigger("click");
+
+		// Set the triggerImmediate flag for this function, so that it is called again next tick
+		dispatchFunctions.autoNip.triggerImmediate = true;
 	}
 }
 
+
+var dispatchFunctions = {
+	autoCraft: {
+		functionRef: autoCraft,
+		triggerInterval: 1,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoCraft
+	},
+	autoObserve: {
+		functionRef: autoObserve,
+		triggerInterval: 5,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.alwaysOn
+	},
+	autoBuild: {
+		functionRef: autoBuild,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoBuild
+	},
+	autoSpace: {
+		functionRef: autoSpace,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoBuild
+	},
+	autoAssign: {
+		functionRef: autoAssign,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoAssign
+	},
+	energyControl: {
+		functionRef: energyControl,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoEnergy
+	},
+	autoResearch: {
+		functionRef: autoResearch,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoScience
+	},
+	autoWorkshop: {
+		functionRef: autoWorkshop,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoUpgrade
+	},
+	autoNip: {
+		functionRef: autoNip,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoBuild
+	},
+	autoParty: {
+		functionRef: autoParty,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoParty
+	},
+	autoTrade: {
+		functionRef: autoTrade,
+		triggerInterval: 10,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoTrade
+	},
+	autoPraise: {
+		functionRef: autoPraise,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoPraise
+	},
+	autoHunt: {
+		functionRef: autoHunt,
+		triggerInterval: 20,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.autoHunt
+	},
+	emergencyTradeFood: {
+		functionRef: emergencyTradeFood,
+		triggerInterval: 1,
+		triggerImmediate: true,
+		triggerTick: Infinity,
+		autoButton: autoButtons.alwaysOn
+	},
+};
+
+var dispatchOrder = [
+	'autoAssign',
+	'emergencyTradeFood',
+	'autoTrade',
+	'autoHunt',
+	'autoObserve',
+	'autoResearch',
+	'autoWorkshop',
+	'autoBuild',
+	'autoSpace',
+	'autoCraft',
+	'energyControl',
+	'autoNip',
+	'autoParty',
+	'autoPraise'
+];
+
 // This function keeps track of the game's ticks and uses math to execute these functions at set times relative to the game.
 clearInterval(runAllAutomation);
+var lastTick = Number.NEGATIVE_INFINITY;
 var runAllAutomation = setInterval(function() {
-	autoNip();
-	autoPraise();
-	autoBuild();
-	emergencyTradeFood();
+	// Check how many ticks have passed since the last time we executed
+	const curTick = gamePage.timer.ticksTotal;
+	const ticksElapsed = curTick - lastTick;
 
-	if (gamePage.timer.ticksTotal % 3 === 0) {
-		autoObserve();
-		autoCraft();
-		autoHunt();
-		autoAssign();
-		energyControl();
+	// Update the last execution tick
+	lastTick = curTick;
+
+	// If this is still the same tick as when we last executed, abort
+	if (ticksElapsed < 1) {
+		return;
 	}
 
-	if (gamePage.timer.ticksTotal % 10 === 0) {
-		autoSpace();
-	}
+	// Dispatch each function in order
+	for (let i = 0; i < dispatchOrder.length; i++) {
+		curFunction = dispatchFunctions[dispatchOrder[i]];
 
-	if (gamePage.timer.ticksTotal % 25 === 0) {
-		autoResearch();
-		autoWorkshop();
-		autoParty();
-		autoTrade();
-	}
+		// A function is triggered when the corresponding button is active and any of 3 conditions are true:
+		//   * The current tick is a multiple of the function's dispatch interval
+		//   * The function set its triggerImmediate flag to true during its last run, indicating it wanted to be called again immediately
+		//   * The function set a triggerTick value, indicating a specific tick it wanted to be called again on, and that tick has arrived
+		// However, for the 1st and 3rd conditions, we must also account for the possibility that the dispatcher might not run every tick, in which case the function should be triggered as soon as possible after its intended trigger tick
+		if (curFunction.autoButton.active && (curFunction.triggerImmediate || (curFunction.triggerTick <= curTick) || ((curTick % curFunction.triggerInterval) < ticksElapsed))) {
+			// Clear the triggerImmediate flag and the triggerTick value; if the function wants to use them again it must reset them during its execution
+			curFunction.triggerImmediate = false;
+			curFunction.triggerTick = Infinity;
 
-}, 200);
+			// Execute the function
+			curFunction.functionRef();
+		}
+	}
+}, 50);
 
